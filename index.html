@@ -716,7 +716,8 @@
             let shouldShoot = false;
             let targetToShoot = null;
 
-            if (closestTeam === 'blue' && (ballsLeftRed >= 2 || difficulty === 'schwer')) {
+            // DEFENSIVE KI-LOGIK: Schießen NUR wenn taktisch unbedingt erforderlich (z.B. Du liegst extrem nah dran)
+            if (closestTeam === 'blue' && difficulty !== 'leicht') {
                 let bestBlueBall = activeBalls
                     .filter(b => b.team === 'blue')
                     .reduce((closest, b) => {
@@ -726,24 +727,30 @@
                     }, activeBalls.filter(b => b.team === 'blue')[0]);
 
                 if (bestBlueBall) {
-                    shouldShoot = true;
-                    targetToShoot = bestBlueBall;
+                    let distanceToTarget = Math.hypot(bestBlueBall.x - targetBallObj.x, bestBlueBall.y - targetBallObj.y);
+                    // Schießt nur, wenn deine Kugel sehr nah am Schweinchen liegt (< 35 Pixel) und die KI schwerere Stufen hat oder unter Druck ist
+                    if (distanceToTarget < 35 && (difficulty === 'schwer' || ballsLeftRed === 1)) {
+                        shouldShoot = true;
+                        targetToShoot = bestBlueBall;
+                    }
                 }
             }
 
             let compX, compY, powerVal;
-            let scatter = difficulty === 'leicht' ? 35 : (difficulty === 'mittel' ? 20 : 7);
+            // Hauptziel der KI: So nah wie möglich an die Sau legen (Pointieren)
+            let scatter = difficulty === 'leicht' ? 30 : (difficulty === 'mittel' ? 15 : 6);
 
             if (shouldShoot && targetToShoot) {
                 compX = targetToShoot.x + (Math.random() - 0.5) * scatter;
                 compY = targetToShoot.y + (Math.random() - 0.5) * scatter;
-                powerVal = 102;
-                document.getElementById('statusBar').innerText = `KI schießt auf deine Kugel!`;
+                powerVal = 105; // Harter Schuss
+                document.getElementById('statusBar').innerText = `KI schießt taktisch auf deine Kugel!`;
             } else {
+                // Konzentration auf das Schweinchen (legen)
                 compX = targetBallObj.x + (Math.random() - 0.5) * scatter;
                 compY = targetBallObj.y + (Math.random() - 0.5) * scatter;
-                powerVal = 75;
-                document.getElementById('statusBar').innerText = `KI legt eine Kugel.`;
+                powerVal = 74; // Kontrollierter Wurf zum Legen
+                document.getElementById('statusBar').innerText = `KI legt eine Kugel nah an die Sau.`;
             }
 
             const startX = 107;
@@ -789,7 +796,6 @@
                 if (frame < totalFrames) {
                     requestAnimationFrame(arcStep);
                 } else {
-                    // Diskreter grauer Punkt beim Aufschlag (Donnée) für knapp 1 Sekunde
                     const impactFlash = document.getElementById('impactFlash');
                     impactFlash.style.left = impactX + 'px';
                     impactFlash.style.top = impactY + 'px';
@@ -848,13 +854,11 @@
                             let nx = distX / (distance || 1);
                             let ny = distY / (distance || 1);
 
-                            // Korrektur der Überlappung (Positionskorrektur)
                             b1.x -= nx * overlap * 0.5;
                             b1.y -= ny * overlap * 0.5;
                             b2.x += nx * overlap * 0.5;
                             b2.y += ny * overlap * 0.5;
 
-                            // Realistischer elastischer Stoß mit Impulsaustausch (Massenverhältnis berücksichtigt)
                             let kx = b1.vx - b2.vx;
                             let ky = b1.vy - b2.vy;
                             let p = 2 * (nx * kx + ny * ky) / 2;
@@ -952,7 +956,7 @@
 
             setTimeout(() => {
                 if (scoreBlue >= 13 || scoreRed >= 13) {
-                    document.getElementById('statusBar').innerText = scoreBlue >= 13 ? "Glückwunsch! Du hast das Match gewonnen!" : "Die KI has das Match gewonnen!";
+                    document.getElementById('statusBar').innerText = scoreBlue >= 13 ? "Glückwunsch! Du hast das Match gewonnen!" : "Die KI hat das Match gewonnen!";
                     setTimeout(resetMatch, 3500);
                 } else {
                     resetRundeData();
