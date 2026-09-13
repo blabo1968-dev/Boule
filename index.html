@@ -8,7 +8,7 @@
     <style>
         body {
             margin: 0;
-            padding: 10px;
+            padding: 8px;
             background-color: #0b1329;
             color: #fff;
             font-family: Arial, sans-serif;
@@ -143,74 +143,63 @@
             flex-direction: column;
             align-items: center;
             width: 100%;
-            max-width: 400px;
+            max-width: 420px;
         }
 
         .game-header {
             text-align: center;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
             width: 100%;
         }
 
         .game-header h2 {
             margin: 0;
             color: #ffffff;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             text-shadow: 0 0 8px rgba(0, 85, 164, 0.8);
         }
 
         .status-bar {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: #ffeb3b;
-            margin: 4px 0 8px 0;
+            margin: 4px 0 6px 0;
             background: rgba(255,255,255,0.08);
-            padding: 6px 10px;
+            padding: 5px 8px;
             border-radius: 4px;
             border: 1px solid rgba(255,255,255,0.15);
             text-align: center;
             font-weight: bold;
-        }
-
-        .play-layout {
-            display: flex;
-            align-items: stretch;
-            justify-content: center;
             width: 100%;
-            gap: 5px;
+            box-sizing: border-box;
         }
 
-        .score-boards {
+        .top-panels-row {
             display: flex;
-            flex-direction: column;
             justify-content: space-between;
-            width: 42px;
-            flex-shrink: 0;
-            margin: 0;
-            gap: 5px;
+            width: 100%;
+            max-width: 340px;
+            margin-bottom: 6px;
+            gap: 10px;
         }
 
         .counter-panel {
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-start;
             background: rgba(255, 255, 255, 0.05);
             border-radius: 6px;
-            padding: 4px 2px;
-            width: 42px;
+            padding: 5px;
+            width: 48%;
             box-sizing: border-box;
-            flex: 1;
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .counter-title {
-            font-size: 0.56rem;
+            font-size: 0.65rem;
             font-weight: bold;
             margin-bottom: 4px;
             text-transform: uppercase;
             text-align: center;
-            line-height: 1.15;
-            word-break: break-word;
         }
 
         .blue-panel .counter-title {
@@ -223,17 +212,16 @@
 
         .score-list {
             display: flex;
-            flex-direction: column;
+            flex-wrap: wrap;
             gap: 2px;
-            flex-wrap: nowrap;
-            justify-content: flex-start;
-            align-items: center;
+            justify-content: center;
+            max-width: 130px;
         }
 
         .score-item {
             font-size: 0.55rem;
-            width: 18px;
-            height: 15px;
+            width: 16px;
+            height: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -255,11 +243,11 @@
             background-color: #ef4135;
         }
 
+        /* RECHTECKIGES SPIELFELD FÜR HANDYS (Hochformat) */
         #terrain {
             position: relative;
-            width: min(300px, calc(100vw - 104px));
-            height: 300px;
-            flex-shrink: 1;
+            width: 320px;
+            height: 380px;
             background-color: #7b848c;
             background-image:
                 radial-gradient(circle, #5a626a 10%, transparent 11%),
@@ -276,7 +264,7 @@
 
         .circle-abwurf {
             position: absolute;
-            bottom: 18px;
+            bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
             width: 40px;
@@ -318,34 +306,6 @@
             border: 1px solid #fff;
         }
 
-        .donnee-marker {
-            position: absolute;
-            width: 14px;
-            height: 14px;
-            border: 2px solid #ffeb3b;
-            background: rgba(255, 235, 59, 0.4);
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 15;
-            pointer-events: none;
-            animation: pulseDonnee 1s forwards;
-        }
-
-        @keyframes pulseDonnee {
-            0% {
-                transform: translate(-50%, -50%) scale(0.5);
-                opacity: 1;
-            }
-            50% {
-                transform: translate(-50%, -50%) scale(1.4);
-                opacity: 0.8;
-            }
-            100% {
-                transform: translate(-50%, -50%) scale(1);
-                opacity: 0;
-            }
-        }
-
         #directionSvg {
             position: absolute;
             top: 0;
@@ -357,13 +317,13 @@
         }
 
         .control-panel {
-            margin-top: 6px;
+            margin-top: 8px;
             display: flex;
             flex-direction: column;
             gap: 6px;
-            width: 100%;
+            width: 320px;
             background: rgba(255,255,255,0.05);
-            padding: 7px;
+            padding: 8px;
             border-radius: 8px;
             border: 1px solid rgba(255,255,255,0.15);
             box-sizing: border-box;
@@ -392,7 +352,7 @@
             color: #fff;
             border: none;
             padding: 9px;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             font-weight: bold;
             border-radius: 6px;
             cursor: pointer;
@@ -450,25 +410,6 @@
             width: 100%;
             max-width: 250px;
         }
-
-        @media (min-width: 700px) {
-            #terrain {
-                width: 320px;
-                height: 320px;
-            }
-
-            .score-boards {
-                width: 48px;
-            }
-
-            .counter-panel {
-                width: 48px;
-            }
-
-            .counter-title {
-                font-size: 0.62rem;
-            }
-        }
     </style>
 </head>
 
@@ -517,51 +458,52 @@
     <div id="gameApp">
         <div class="game-header">
             <h2>Pétanque Master (Tet)</h2>
-            <div class="status-bar" id="statusBar">Bereit zum Start</div>
         </div>
+        <div class="status-bar" id="statusBar">Bereit zum Start</div>
 
-        <div class="play-layout">
-            <div class="score-boards">
-                <div class="counter-panel blue-panel">
-                    <div class="counter-title">Du (Blau) [Rest: <span id="restBlue">3</span>]</div>
-                    <div class="score-list" id="counter-blue"></div>
-                </div>
-
-                <div class="counter-panel red-panel">
-                    <div class="counter-title" id="kiTitle">KI (Rot) [Rest: <span id="restRed">3</span>]</div>
-                    <div class="score-list" id="counter-red"></div>
-                </div>
+        <!-- Oben nebeneinander: Die beiden Punktezähler -->
+        <div class="top-panels-row">
+            <div class="counter-panel blue-panel">
+                <div class="counter-title">Du (Blau) [Rest: <span id="restBlue">3</span>]</div>
+                <div class="score-list" id="counter-blue"></div>
             </div>
 
-            <div id="terrain">
-                <svg id="directionSvg">
-                    <defs>
-                        <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="6" refY="3.5" orient="auto">
-                            <polygon points="0 0, 10 3.5, 0 7" fill="#ffeb3b"></polygon>
-                        </marker>
-                    </defs>
-                    <line id="aimLine" x1="150" y1="258" x2="150" y2="170" stroke="#ffeb3b" stroke-width="3" marker-end="url(#arrowhead)"></line>
-                </svg>
-
-                <div class="circle-abwurf" id="abwurfKreis"></div>
-                <div class="target-ball" id="targetBall"></div>
-                <div id="ballsContainer"></div>
-
-                <div id="endScreenOverlay">
-                    <h3 id="endScreenTitle">Turniersieg!</h3>
-                    <p id="endScreenText">Möchtest du noch eine Runde spielen?</p>
-                    <div class="end-btn-group">
-                        <button class="btn" onclick="startNewGameFromOverlay()">Noch eine Runde spielen</button>
-                        <button class="btn" style="background-color: #555;" onclick="goToMainStartScreen()">Zurück zum Start</button>
-                    </div>
-                </div>
+            <div class="counter-panel red-panel">
+                <div class="counter-title" id="kiTitle">KI (Rot) [Rest: <span id="restRed">3</span>]</div>
+                <div class="score-list" id="counter-red"></div>
             </div>
         </div>
 
+        <!-- Rechteckiges Spielfeld im Hochformat -->
+        <div id="terrain">
+            <svg id="directionSvg">
+                <defs>
+                    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="6" refY="3.5" orient="auto">
+                        <polygon points="0 0, 10 3.5, 0 7" fill="#ffeb3b"></polygon>
+                    </marker>
+                </defs>
+                <line id="aimLine" x1="160" y1="338" x2="160" y2="200" stroke="#ffeb3b" stroke-width="3" marker-end="url(#arrowhead)"></line>
+            </svg>
+
+            <div class="circle-abwurf" id="abwurfKreis"></div>
+            <div class="target-ball" id="targetBall"></div>
+            <div id="ballsContainer"></div>
+
+            <div id="endScreenOverlay">
+                <h3 id="endScreenTitle">Turniersieg!</h3>
+                <p id="endScreenText">Möchtest du noch eine Runde spielen?</p>
+                <div class="end-btn-group">
+                    <button class="btn" onclick="startNewGameFromOverlay()">Noch eine Runde spielen</button>
+                    <button class="btn" style="background-color: #555;" onclick="goToMainStartScreen()">Zurück zum Start</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bedienelemente unter dem Spielfeld -->
         <div class="control-panel">
             <div class="power-slider-container">
                 <label for="powerRange" id="powerLabel">Kraft: 70%</label>
-                <input type="range" id="powerRange" min="20" max="112" value="78">
+                <input type="range" id="powerRange" min="20" max="130" value="85">
             </div>
             <button class="btn-wurf" id="btnWurf" onclick="executePlayerThrow()">Wurf im Bogen ausführen</button>
         </div>
@@ -578,8 +520,8 @@
         let playedBalls = [];
 
         let targetBallObj = {
-            x: 150,
-            y: 85,
+            x: 160,
+            y: 110,
             vx: 0,
             vy: 0,
             radius: 6,
@@ -592,8 +534,8 @@
         let isProcessing = false;
         let lastRoundWinner = 'blue';
 
-        let aimX = 150;
-        let aimY = 140;
+        let aimX = 160;
+        let aimY = 200;
 
         const terrain = document.getElementById('terrain');
         let audioCtx = null;
@@ -660,8 +602,8 @@
 
         powerRangeInput.addEventListener('input', (e) => {
             let val = parseInt(e.target.value);
-            let percent = Math.round((val / 112) * 100);
-            if (percent > 85) {
+            let percent = Math.round((val / 130) * 100);
+            if (percent > 80) {
                 powerLabel.innerText = `Kraft: ${percent}% (Schuss)`;
             } else {
                 powerLabel.innerText = `Kraft: ${percent}%`;
@@ -669,9 +611,10 @@
         });
 
         function randomizeTargetPosition() {
-            let fieldWidth = terrain.clientWidth || 300;
-            targetBallObj.x = 55 + Math.random() * Math.max(80, fieldWidth - 110);
-            targetBallObj.y = 60 + Math.random() * 70;
+            let fieldWidth = terrain.clientWidth || 320;
+            let fieldHeight = terrain.clientHeight || 380;
+            targetBallObj.x = 50 + Math.random() * (fieldWidth - 100);
+            targetBallObj.y = 60 + Math.random() * (fieldHeight - 160);
             targetBallObj.vx = 0;
             targetBallObj.vy = 0;
             targetBallObj.out = false;
@@ -692,7 +635,7 @@
         function initGame() {
             updateCounters();
             updateRestDisplay();
-            updateAimLineFromCoords(getThrowStartX(), 140);
+            updateAimLineFromCoords(getThrowStartX(), 200);
             determineNextTurnByRules();
         }
 
@@ -815,12 +758,7 @@
             return closest.team;
         }
 
-        function getDistanceFromTargetInCm(ball) {
-            let pixelDist = Math.hypot(ball.x - targetBallObj.x, ball.y - targetBallObj.y);
-            return Math.round(pixelDist * 2.2);
-        }
-
-        function updateStatus(lastThrownBall = null, teamName = "") {
+        function updateStatus() {
             let leadingTeam = getClosestTeamToTarget();
             let leadingText = leadingTeam === 'blue' ? 'Du liegst vorne' : (leadingTeam === 'red' ? 'KI liegt vorne' : 'Keine Kugel im Spiel');
             document.getElementById('statusBar').innerText = `Am Zug: ${currentTurn === 'blue' ? 'Du (Blau)' : 'KI (Rot)'} | ${leadingText}`;
@@ -855,6 +793,14 @@
             updateAimLineFromCoords(clientX, clientY);
         });
 
+        terrain.addEventListener('pointerdown', (e) => {
+            if (currentTurn !== 'blue' || isProcessing) return;
+            const rect = terrain.getBoundingClientRect();
+            let clientX = e.clientX - rect.left;
+            let clientY = e.clientY - rect.top;
+            updateAimLineFromCoords(clientX, clientY);
+        });
+
         function executePlayerThrow() {
             if (currentTurn !== 'blue' || isProcessing || ballsLeftBlue <= 0) return;
             isProcessing = true;
@@ -870,7 +816,7 @@
             let dy = aimY - startY;
             let dist = Math.hypot(dx, dy);
 
-            let factor = (powerVal / 78) * (dist / 100);
+            let factor = (powerVal / 85) * (dist / 120);
             let targetFinalX = startX + dx * factor;
             let targetFinalY = startY + dy * factor;
 
