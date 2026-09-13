@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Handy Boule Spiel</title>
+    <title>Pétanque Master – Taktisches Regelwerk</title>
     <style>
         * {
             box-sizing: border-box;
@@ -11,100 +11,812 @@
             padding: 0;
         }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #0b132b;
-            color: #ffffff;
+            background-color: #0b1329;
+            color: #fff;
+            font-family: Arial, sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
             min-height: 100vh;
-            padding: 10px;
+            padding: 5px;
+            user-select: none;
             overflow-x: hidden;
         }
-        h1 {
-            font-size: 1.2rem;
-            margin-bottom: 8px;
-            text-align: center;
-        }
-        #game-container {
+        #startScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            max-width: 400px;
-            background-color: #1c2541;
-            border-radius: 12px;
+            height: 100%;
+            background: linear-gradient(135deg, #101d3f, #070b19);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            overflow-y: auto;
             padding: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
         }
-        canvas {
-            width: 100%;
-            height: auto;
-            aspect-ratio: 3 / 4;
-            background-color: #273b5e;
-            border-radius: 8px;
-            display: block;
+        .start-container {
+            text-align: center;
+            border: 2px solid #ffffff;
+            border-radius: 10px;
+            padding: 15px;
+            width: 95%;
+            max-width: 380px;
+            box-shadow: 0 0 20px rgba(0, 85, 164, 0.4);
+            background: rgba(11, 19, 41, 0.95);
         }
-        .control-panel {
-            background-color: #3a506b;
-            padding: 8px 12px;
-            border-radius: 8px;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
+        h1 {
+            font-size: 1.5rem;
+            color: #ffffff;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
-        .kraft-label {
-            font-size: 0.9rem;
+        .subtitle {
+            font-size: 0.8rem;
+            color: #cfd8dc;
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+        .developer {
+            font-size: 0.7rem;
+            color: #a0aab5;
+            margin-bottom: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 4px 0;
+        }
+        .developer span {
+            color: #ef4135;
             font-weight: bold;
         }
-        input[type="range"] {
-            width: 100%;
-            height: 25px;
-            accent-color: #e63946;
+        .menu-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin-bottom: 8px;
+            text-align: left;
         }
-        button {
+        .menu-group label {
+            font-size: 0.75rem;
+            color: #cfd8dc;
+        }
+        select, .btn {
             width: 100%;
-            background-color: #e63946;
-            color: white;
+            padding: 8px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            border-radius: 6px;
             border: none;
-            padding: 12px;
+        }
+        select {
+            background: #101d3f;
+            color: #fff;
+            border: 1px solid #0055a4;
+        }
+        .btn {
+            background-color: #0055a4;
+            color: #fff;
+            cursor: pointer;
+            text-transform: uppercase;
+            margin-top: 4px;
+        }
+        .legal-info {
+            margin-top: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            padding-top: 6px;
+            font-size: 0.65rem;
+            color: #90a4ae;
+            text-align: left;
+            line-height: 1.1;
+        }
+        .legal-info h3 {
+            font-size: 0.7rem;
+            color: #cfd8dc;
+            margin: 4px 0 2px 0;
+            text-transform: uppercase;
+        }
+
+        #gameApp {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 380px;
+        }
+        .game-header {
+            text-align: center;
+            margin-bottom: 2px;
+            width: 100%;
+        }
+        .game-header h2 {
+            margin: 0;
+            color: #ffffff;
             font-size: 1rem;
+        }
+        .status-bar {
+            font-size: 0.75rem;
+            color: #ffeb3b;
+            margin: 2px 0 4px 0;
+            background: rgba(255,255,255,0.08);
+            padding: 4px 6px;
+            border-radius: 4px;
+            border: 1px solid rgba(255,255,255,0.15);
+            text-align: center;
+            font-weight: bold;
+        }
+        .score-boards {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-bottom: 4px;
+            gap: 6px;
+        }
+        .counter-panel {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+            padding: 4px;
+            flex: 1;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .counter-title {
+            font-size: 0.65rem;
+            font-weight: bold;
+            margin-bottom: 2px;
+            text-transform: uppercase;
+        }
+        .blue-panel .counter-title { color: #4da6ff; }
+        .red-panel .counter-title { color: #ff6666; }
+
+        .score-list {
+            display: flex;
+            gap: 2px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .score-item {
+            font-size: 0.55rem;
+            width: 14px;
+            height: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 2px;
+            color: #888;
+            background: rgba(0,0,0,0.3);
+        }
+        .score-item.active {
+            color: #fff;
+            font-weight: bold;
+        }
+        .blue-panel .score-item.active { background-color: #0055a4; }
+        .red-panel .score-item.active { background-color: #ef4135; }
+
+        #terrain {
+            position: relative;
+            width: 100%;
+            height: 280px;
+            background-color: #7b848c;
+            background-image: 
+                radial-gradient(circle, #5a626a 10%, transparent 11%),
+                radial-gradient(circle, #959ea6 10%, transparent 11%);
+            background-size: 16px 16px;
+            background-position: 0 0, 8px 8px;
+            border: 2px dashed rgba(255, 255, 255, 0.4);
+            border-radius: 6px;
+            overflow: hidden;
+            touch-action: none;
+        }
+        .circle-abwurf {
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 34px;
+            height: 34px;
+            border: 2px dashed #ef4135;
+            border-radius: 50%;
+            background: rgba(239, 65, 53, 0.2);
+            pointer-events: none;
+        }
+        .ball {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 2px 2px 4px rgba(0,0,0,0.6);
+        }
+        .target-ball {
+            position: absolute;
+            background: radial-gradient(circle at 30% 30%, #ffeb3b, #f57f17);
+            width: 10px;
+            height: 10px;
+            border: 1px solid #333;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 1px 1px 3px rgba(0,0,0,0.6);
+            z-index: 10;
+        }
+        .blue-ball {
+            background: radial-gradient(circle at 30% 30%, #4da6ff, #004080);
+            border: 1px solid #fff;
+        }
+        .red-ball {
+            background: radial-gradient(circle at 30% 30%, #ff6666, #b30000);
+            border: 1px solid #fff;
+        }
+        .donnee-marker {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border: 2px solid #ffeb3b;
+            background: rgba(255, 235, 59, 0.4);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 15;
+            pointer-events: none;
+            animation: pulseDonnee 1s forwards;
+        }
+        @keyframes pulseDonnee {
+            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(1.2); opacity: 0; }
+        }
+
+        #directionSvg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5;
+        }
+        .control-panel {
+            margin-top: 6px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            width: 100%;
+            background: rgba(255,255,255,0.05);
+            padding: 6px;
+            border-radius: 6px;
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+        .power-slider-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .power-slider-container label {
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: #cfd8dc;
+            white-space: nowrap;
+        }
+        input[type=range] {
+            flex: 1;
+            accent-color: #ef4135;
+            height: 20px;
+        }
+        .btn-wurf {
+            background-color: #ef4135;
+            color: #fff;
+            border: none;
+            padding: 8px;
+            font-size: 0.85rem;
             font-weight: bold;
             border-radius: 6px;
             cursor: pointer;
             text-transform: uppercase;
+            width: 100%;
         }
-        button:active {
-            background-color: #d90429;
+        .btn-wurf:disabled { background-color: #555; color: #888; cursor: not-allowed; }
+
+        #endScreenOverlay {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(11, 19, 41, 0.95);
+            z-index: 50;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+            text-align: center;
+            border-radius: 6px;
+        }
+        #endScreenOverlay h3 {
+            font-size: 1.1rem;
+            color: #ffeb3b;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+        #endScreenOverlay p {
+            font-size: 0.8rem;
+            color: #cfd8dc;
+            margin-bottom: 12px;
+        }
+        .end-btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            width: 100%;
+            max-width: 220px;
         }
     </style>
 </head>
 <body>
 
-    <h1>Boule Spiel</h1>
-    
-    <div id="game-container">
-        <!-- Spielfläche / Canvas -->
-        <canvas id="bouleCanvas" width="300" height="400"></canvas>
-        
-        <!-- Steuerungsbereich (kompakt für Smartphones) -->
+    <div id="startScreen">
+        <div class="start-container">
+            <h1>Pétanque Master</h1>
+            <div class="subtitle">Individuelle Spiele für Vereine, Unternehmen und Städte.</div>
+            
+            <div class="developer">
+                Entwickelt von <span>Blankenhagen Spieleentwicklung</span>
+            </div>
+
+            <div class="menu-group">
+                <label for="selectMode">Spielmodus:</label>
+                <select id="selectMode" disabled>
+                    <option value="tet" selected>Tet (1 gegen 1, je 3 Kugeln)</option>
+                </select>
+            </div>
+
+            <div class="menu-group">
+                <label for="selectDifficulty">KI-Schwierigkeit:</label>
+                <select id="selectDifficulty">
+                    <option value="leicht">Leicht (Entspanntes Spiel)</option>
+                    <option value="mittel" selected>Mittel (Taktisch)</option>
+                    <option value="schwer">Herausfordernd (Starker Tireur)</option>
+                </select>
+            </div>
+
+            <button class="btn" id="startBtn" onclick="startGame()">Spiel starten</button>
+
+            <div class="legal-info">
+                <h3>Impressum</h3>
+                Blankenhagen Spieleentwicklung | 73614 Schorndorf<br>
+                E-Mail: spieleentwicklung@freenet.de
+                
+                <h3>Datenschutz</h3>
+                Keine Speicherung von Personaldaten. Lokale Ausführung.
+            </div>
+        </div>
+    </div>
+
+    <div id="gameApp">
+        <div class="game-header">
+            <h2>Pétanque Master (Tet)</h2>
+            <div class="status-bar" id="statusBar">Bereit zum Start</div>
+        </div>
+
+        <div class="score-boards">
+            <div class="counter-panel blue-panel">
+                <div class="counter-title">Du (Blau) [Rest: <span id="restBlue">3</span>]</div>
+                <div class="score-list" id="counter-blue"></div>
+            </div>
+            <div class="counter-panel red-panel">
+                <div class="counter-title" id="kiTitle">KI (Rot) [Rest: <span id="restRed">3</span>]</div>
+                <div class="score-list" id="counter-red"></div>
+            </div>
+        </div>
+
+        <div id="terrain">
+            <svg id="directionSvg">
+                <defs>
+                    <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="5" refY="3" orient="auto">
+                        <polygon points="0 0, 8 3, 0 6" fill="#ffeb3b" />
+                    </marker>
+                </defs>
+                <line id="aimLine" x1="190" y1="250" x2="190" y2="160" stroke="#ffeb3b" stroke-width="2.5" marker-end="url(#arrowhead)" />
+            </svg>
+            <div class="circle-abwurf" id="abwurfKreis"></div>
+            <div class="target-ball" id="targetBall"></div>
+            <div id="ballsContainer"></div>
+
+            <div id="endScreenOverlay">
+                <h3 id="endScreenTitle">Turniersieg!</h3>
+                <p id="endScreenText">Möchtest du noch eine Runde spielen?</p>
+                <div class="end-btn-group">
+                    <button class="btn" onclick="startNewGameFromOverlay()">Noch eine Runde</button>
+                    <button class="btn" style="background-color: #555;" onclick="goToMainStartScreen()">Zum Start</button>
+                </div>
+            </div>
+        </div>
+
         <div class="control-panel">
-            <div class="kraft-label" id="kraftText">Kraft: 50%</div>
-            <input type="range" id="kraftRegler" min="1" max="100" value="50">
-            <button id="wurfBtn">Wurf im Bogen ausführen</button>
+            <div class="power-slider-container">
+                <label for="powerRange" id="powerLabel">Kraft: 70%</label>
+                <input type="range" id="powerRange" min="20" max="112" value="78">
+            </div>
+            <button class="btn-wurf" id="btnWurf" onclick="executePlayerThrow()">Wurf im Bogen ausführen</button>
         </div>
     </div>
 
     <script>
-        // Einfache Logik für den Regler-Text zur Veranschaulichung
-        const regler = document.getElementById('kraftRegler');
-        const kraftText = document.getElementById('kraftText');
+        let scoreBlue = 0;
+        let scoreRed = 0;
+        let currentTurn = 'blue';
+        let ballsLeftBlue = 3;
+        let ballsLeftRed = 3;
+        let playedBalls = []; 
+        let targetBallObj = { x: 190, y: 70, vx: 0, vy: 0, radius: 5, team: 'target', out: false };
+        let difficulty = 'mittel';
+        let gameMode = 'tet';
+        let isProcessing = false;
+        let lastRoundWinner = 'blue';
+        let aimX = 190;
+        let aimY = 120;
+        const terrain = document.getElementById('terrain');
+        let audioCtx = null;
 
-        regler.addEventListener('input', (e) => {
-            kraftText.innerText = `Kraft: ${e.target.value}%`;
+        function playMetalClankSound(isHardHit) {
+            try {
+                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                let osc = audioCtx.createOscillator();
+                let gainNode = audioCtx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(isHardHit ? 850 : 600, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(150, audioCtx.currentTime + 0.15);
+                gainNode.gain.setValueAtTime(isHardHit ? 0.7 : 0.4, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
+                osc.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.15);
+            } catch(e) {}
+        }
+
+        function startGame() {
+            gameMode = 'tet';
+            difficulty = document.getElementById('selectDifficulty').value;
+            ballsLeftBlue = 3;
+            ballsLeftRed = 3;
+            scoreBlue = 0;
+            scoreRed = 0;
+            isProcessing = false;
+            lastRoundWinner = 'blue';
+            document.getElementById('endScreenOverlay').style.display = 'none';
+            document.getElementById('kiTitle').innerHTML = `KI (${difficulty.toUpperCase()}) [Rest: <span id="restRed">${ballsLeftRed}</span>]`;
+            document.getElementById('startScreen').style.display = 'none';
+            document.getElementById('gameApp').style.display = 'flex';
+            randomizeTargetPosition();
+            initGame();
+        }
+
+        const powerRangeInput = document.getElementById('powerRange');
+        const powerLabel = document.getElementById('powerLabel');
+        powerRangeInput.addEventListener('input', (e) => {
+            let val = parseInt(e.target.value);
+            let percent = Math.round((val / 112) * 100);
+            powerLabel.innerText = percent > 85 ? `Kraft: ${percent}% (Schuss)` : `Kraft: ${percent}%`;
         });
-    </script>
 
+        function randomizeTargetPosition() {
+            targetBallObj.x = 80 + Math.random() * 220;
+            targetBallObj.y = 50 + Math.random() * 70;
+            targetBallObj.vx = 0;
+            targetBallObj.vy = 0;
+            targetBallObj.out = false;
+            updateTargetBallDOM();
+        }
+
+        function updateTargetBallDOM() {
+            const targetEl = document.getElementById('targetBall');
+            if (targetBallObj.out) {
+                targetEl.style.display = 'none';
+            } else {
+                targetEl.style.display = 'block';
+                targetEl.style.left = targetBallObj.x + 'px';
+                targetEl.style.top = targetBallObj.y + 'px';
+            }
+        }
+
+        function initGame() {
+            updateCounters();
+            updateRestDisplay();
+            updateAimLineFromCoords(190, 120);
+            determineNextTurnByRules();
+        }
+
+        function updateCounters() {
+            createScoreList('counter-blue', scoreBlue);
+            createScoreList('counter-red', scoreRed);
+        }
+
+        function createScoreList(containerId, currentScore) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            for (let i = 0; i <= 13; i++) {
+                let item = document.createElement('div');
+                item.className = 'score-item' + (i === currentScore ? ' active' : '');
+                item.innerText = i;
+                container.appendChild(item);
+            }
+        }
+
+        function updateRestDisplay() {
+            document.querySelector('.blue-panel .counter-title').innerHTML = `Du (Blau) [Rest: <span>${ballsLeftBlue}</span>]`;
+            document.querySelector('.red-panel .counter-title').innerHTML = `KI (${difficulty.toUpperCase()}) [Rest: <span>${ballsLeftRed}</span>]`;
+        }
+
+        function determineNextTurnByRules() {
+            if (isProcessing) return;
+            if (targetBallObj.out) {
+                isProcessing = true;
+                document.getElementById('btnWurf').disabled = true;
+                document.getElementById('statusBar').innerText = "Schweinchen im AUS!";
+                setTimeout(handleTargetOutRule, 1500);
+                return;
+            }
+            if (ballsLeftBlue <= 0 && ballsLeftRed <= 0) {
+                isProcessing = true;
+                document.getElementById('btnWurf').disabled = true;
+                document.getElementById('statusBar').innerText = "Aufnahme beendet!";
+                setTimeout(endRundeAutomatically, 1200);
+                return;
+            }
+            if (ballsLeftBlue <= 0) currentTurn = 'red';
+            else if (ballsLeftRed <= 0) currentTurn = 'blue';
+            else if (playedBalls.filter(b => !b.out).length === 0) currentTurn = lastRoundWinner;
+            else {
+                let closestTeam = getClosestTeamToTarget();
+                currentTurn = (closestTeam === 'blue') ? 'red' : 'blue';
+            }
+            updateStatus();
+            if (currentTurn === 'red') {
+                document.getElementById('btnWurf').disabled = true;
+                setTimeout(computerTurn, 800);
+            } else {
+                document.getElementById('btnWurf').disabled = false;
+            }
+        }
+
+        function handleTargetOutRule() {
+            let blueHas = ballsLeftBlue > 0, redHas = ballsLeftRed > 0;
+            if (blueHas && redHas) {
+                setTimeout(() => resetRundeData(), 2000);
+            } else if (!blueHas && !redHas) {
+                setTimeout(() => resetRundeData(), 2000);
+            } else {
+                let scoring = blueHas ? 'blue' : 'red';
+                let pts = scoring === 'blue' ? ballsLeftBlue : ballsLeftRed;
+                if (scoring === 'blue') { scoreBlue = Math.min(13, scoreBlue + pts); lastRoundWinner = 'blue'; }
+                else { scoreRed = Math.min(13, scoreRed + pts); lastRoundWinner = 'red'; }
+                updateCounters();
+                setTimeout(() => {
+                    if (scoreBlue >= 13 || scoreRed >= 13) handleMatchEnd();
+                    else resetRundeData();
+                }, 2000);
+            }
+        }
+
+        function getClosestTeamToTarget() {
+            let active = playedBalls.filter(b => !b.out);
+            if (active.length === 0 || targetBallObj.out) return null;
+            let closest = active[0], minDist = Math.hypot(closest.x - targetBallObj.x, closest.y - targetBallObj.y);
+            for (let i = 1; i < active.length; i++) {
+                let dist = Math.hypot(active[i].x - targetBallObj.x, active[i].y - targetBallObj.y);
+                if (dist < minDist) { minDist = dist; closest = active[i]; }
+            }
+            return closest.team;
+        }
+
+        function getDistanceFromTargetInCm(ball) {
+            return Math.round(Math.hypot(ball.x - targetBallObj.x, ball.y - targetBallObj.y) * 2.2);
+        }
+
+        function updateStatus(lastThrown = null, team = "") {
+            let leading = getClosestTeamToTarget();
+            let leadText = leading === 'blue' ? 'Du führst' : (leading === 'red' ? 'KI führt' : 'Keine Kugel');
+            if (lastThrown) {
+                if (lastThrown.out) document.getElementById('statusBar').innerText = "Wurf im AUS!";
+                else document.getElementById('statusBar').innerText = `${team === 'blue' ? 'Dein Wurf' : 'KI'}: ${getDistanceFromTargetInCm(lastThrown)} cm (${leadText})`;
+            } else {
+                document.getElementById('statusBar').innerText = currentTurn === 'blue' ? `Du bist am Zug (${leadText})` : `KI am Zug (${leadText})`;
+            }
+        }
+
+        terrain.addEventListener('pointerdown', (e) => {
+            if (currentTurn !== 'blue' || ballsLeftBlue <= 0 || isProcessing) return;
+            const rect = terrain.getBoundingClientRect();
+            aimX = e.clientX - rect.left;
+            aimY = e.clientY - rect.top;
+            updateAimLineFromCoords(aimX, aimY);
+        });
+
+        function updateAimLineFromCoords(tx, ty) {
+            const sx = 190, sy = 250;
+            let dx = tx - sx, dy = ty - sy, dist = Math.hypot(dx, dy) || 1;
+            let line = document.getElementById('aimLine');
+            line.setAttribute('x1', sx); line.setAttribute('y1', sy);
+            line.setAttribute('x2', sx + (dx / dist) * 70);
+            line.setAttribute('y2', sy + (dy / dist) * 70);
+        }
+
+        function executePlayerThrow() {
+            if (currentTurn !== 'blue' || ballsLeftBlue <= 0 || isProcessing) return;
+            isProcessing = true;
+            document.getElementById('btnWurf').disabled = true;
+            let powerVal = parseInt(document.getElementById('powerRange').value);
+            const sx = 190, sy = 250;
+            let dx = aimX - sx, dy = aimY - sy, dist = Math.hypot(dx, dy) || 1;
+            let maxReach = 150 * (powerVal / 78);
+            let impactX = sx + (dx / dist) * Math.min(dist * (powerVal / 78), maxReach);
+            let impactY = sy + (dy / dist) * Math.min(dist * (powerVal / 78), maxReach);
+            ballsLeftBlue--;
+            updateRestDisplay();
+            startArcThrowSimulation('blue', sx, sy, impactX, impactY, powerVal);
+        }
+
+        function computerThrow() {
+            if (ballsLeftRed <= 0 || isProcessing) return;
+            isProcessing = true;
+            const sx = 190, sy = 250;
+            let closest = getClosestTeamToTarget();
+            let activeBlue = playedBalls.filter(b => !b.out && b.team === 'blue');
+            let tx, ty, powerVal;
+            if (closest === 'blue' && activeBlue.length > 0 && difficulty !== 'leicht') {
+                let best = activeBlue[0], minD = Math.hypot(best.x - targetBallObj.x, best.y - targetBallObj.y);
+                activeBlue.forEach(b => { let d = Math.hypot(b.x - targetBallObj.x, b.y - targetBallObj.y); if(d < minD){minD=d; best=b;} });
+                let scatter = difficulty === 'schwer' ? 8 : 20;
+                tx = best.x + (Math.random() - 0.5) * scatter;
+                ty = best.y + (Math.random() - 0.5) * scatter;
+                powerVal = 105;
+            } else {
+                let scatter = difficulty === 'leicht' ? 40 : (difficulty === 'mittel' ? 22 : 10);
+                let angle = Math.random() * Math.PI * 2;
+                tx = targetBallObj.x + Math.cos(angle) * 15 + (Math.random() - 0.5) * scatter;
+                ty = targetBallObj.y + Math.sin(angle) * 15 + (Math.random() - 0.5) * scatter;
+                powerVal = 74;
+            }
+            ballsLeftRed--;
+            updateRestDisplay();
+            startArcThrowSimulation('red', sx, sy, tx, ty, powerVal);
+        }
+
+        function computerTurn() {
+            if (ballsLeftRed <= 0 || isProcessing) return;
+            computerThrow();
+        }
+
+        function startArcThrowSimulation(team, sx, sy, impactX, impactY, powerVal) {
+            let ballObj = { x: sx, y: sy, vx: 0, vy: 0, team: team, radius: 8, out: false };
+            playedBalls.push(ballObj);
+            let frames = 25, frame = 0;
+
+            function arcStep() {
+                frame++;
+                let t = frame / frames;
+                ballObj.x = sx + (impactX - sx) * t;
+                ballObj.y = sy + (impactY - sy) * t;
+                redrawBalls();
+                if (frame < frames) requestAnimationFrame(arcStep);
+                else {
+                    showDonneeMarker(impactX, impactY);
+                    let rDx = impactX - sx, rDy = impactY - sy, rDist = Math.hypot(rDx, rDy) || 1;
+                    let speed = powerVal / 25;
+                    ballObj.vx = (rDx / rDist) * speed;
+                    ballObj.vy = (rDy / rDist) * speed;
+                    playMetalClankSound(powerVal > 95);
+                    requestAnimationFrame(groundRollStep);
+                }
+            }
+
+            function groundRollStep() {
+                let all = [...playedBalls.filter(b => !b.out)];
+                if (!targetBallObj.out) all.push(targetBallObj);
+                all.forEach(o => {
+                    o.x += o.vx; o.y += o.vy;
+                    o.vx *= 0.95; o.vy *= 0.95;
+                    if (o.x < -10 || o.x > 390 || o.y < -10 || o.y > 290) { o.out = true; o.vx = 0; o.vy = 0; }
+                });
+
+                for (let i = 0; i < all.length; i++) {
+                    for (let j = i + 1; j < all.length; j++) {
+                        let b1 = all[i], b2 = all[j];
+                        if (b1.out || b2.out) continue;
+                        let dx = b2.x - b1.x, dy = b2.y - b1.y, dist = Math.hypot(dx, dy);
+                        let minD = b1.radius + b2.radius;
+                        if (dist < minD) {
+                            let overlap = minD - dist, nx = dx / (dist || 1), ny = dy / (dist || 1);
+                            b1.x -= nx * overlap * 0.5; b1.y -= ny * overlap * 0.5;
+                            b2.x += nx * overlap * 0.5; b2.y += ny * overlap * 0.5;
+                            playMetalClankSound(false);
+                        }
+                    }
+                }
+                redrawBalls();
+                updateTargetBallDOM();
+                let maxSpd = Math.max(...all.map(o => Math.hypot(o.vx, o.vy)), 0);
+                if (maxSpd > 0.08) requestAnimationFrame(groundRollStep);
+                else {
+                    all.forEach(o => { o.vx = 0; o.vy = 0; });
+                    updateStatus(ballObj, team);
+                    setTimeout(() => { isProcessing = false; determineNextTurnByRules(); }, 500);
+                }
+            }
+            requestAnimationFrame(arcStep);
+        }
+
+        function showDonneeMarker(x, y) {
+            let m = document.createElement('div');
+            m.className = 'donnee-marker';
+            m.style.left = x + 'px'; m.style.top = y + 'px';
+            terrain.appendChild(m);
+            setTimeout(() => { if (m.parentNode) m.parentNode.removeChild(m); }, 800);
+        }
+
+        function redrawBalls() {
+            const container = document.getElementById('ballsContainer');
+            container.innerHTML = '';
+            playedBalls.forEach(b => {
+                if (!b.out) {
+                    let el = document.createElement('div');
+                    el.className = `ball ${b.team === 'blue' ? 'blue-ball' : 'red-ball'}`;
+                    el.style.left = b.x + 'px'; el.style.top = b.y + 'px';
+                    container.appendChild(el);
+                }
+            });
+        }
+
+        function endRundeAutomatically() {
+            let closest = getClosestTeamToTarget(), pts = 0;
+            if (closest) {
+                let opp = closest === 'blue' ? 'red' : 'blue', bestOppD = 9999;
+                playedBalls.forEach(b => {
+                    if (!b.out && b.team === opp) bestOppD = Math.min(bestOppD, Math.hypot(b.x - targetBallObj.x, b.y - targetBallObj.y));
+                });
+                playedBalls.forEach(b => {
+                    if (!b.out && b.team === closest && Math.hypot(b.x - targetBallObj.x, b.y - targetBallObj.y) < bestOppD) pts++;
+                });
+                if (pts === 0) pts = 1;
+                if (closest === 'blue') { scoreBlue = Math.min(13, scoreBlue + pts); lastRoundWinner = 'blue'; }
+                else { scoreRed = Math.min(13, scoreRed + pts); lastRoundWinner = 'red'; }
+            }
+            updateCounters();
+            setTimeout(() => {
+                if (scoreBlue >= 13 || scoreRed >= 13) handleMatchEnd();
+                else resetRundeData();
+            }, 1500);
+        }
+
+        function handleMatchEnd() {
+            document.getElementById('endScreenOverlay').style.display = 'flex';
+            document.getElementById('endScreenTitle').innerText = scoreBlue >= 13 ? "Turniersieg!" : "Spiel beendet";
+            document.getElementById('endScreenText').innerText = scoreBlue >= 13 ? "Herzlichen Glückwunsch!" : "Die KI hat gewonnen.";
+        }
+
+        function startNewGameFromOverlay() {
+            document.getElementById('endScreenOverlay').style.display = 'none';
+            scoreBlue = 0; scoreRed = 0; isProcessing = false; lastRoundWinner = 'blue';
+            resetRundeData();
+        }
+
+        function goToMainStartScreen() {
+            document.getElementById('endScreenOverlay').style.display = 'none';
+            document.getElementById('gameApp').style.display = 'none';
+            document.getElementById('startScreen').style.display = 'flex';
+        }
+
+        function resetRundeData() {
+            ballsLeftBlue = 3; ballsLeftRed = 3; playedBalls = []; isProcessing = false;
+            randomizeTargetPosition();
+            redrawBalls();
+            updateRestDisplay();
+            determineNextTurnByRules();
+        }
+    </script>
 </body>
 </html>
