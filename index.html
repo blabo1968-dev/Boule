@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -172,8 +171,6 @@
             font-weight: bold;
         }
 
-        /* NEU:
-           Punkte links und rechts neben dem Spielfeld */
         .play-layout {
             display: flex;
             align-items: stretch;
@@ -258,7 +255,6 @@
             background-color: #ef4135;
         }
 
-        /* SCHMALERES UND KÜRZERES SPIELFELD */
         #terrain {
             position: relative;
             width: min(300px, calc(100vw - 104px));
@@ -455,7 +451,6 @@
             max-width: 250px;
         }
 
-        /* Auf breiteren Bildschirmen etwas größer */
         @media (min-width: 700px) {
             #terrain {
                 width: 320px;
@@ -481,232 +476,98 @@
 
     <div id="startScreen">
         <div class="start-container">
-
             <h1>Pétanque Master</h1>
-
             <div class="subtitle">
-                Wir entwickeln individuelle Spiele für Ihre Vereine,
-                Ihre Unternehmen oder Ihre Stadt.
+                Wir entwickeln individuelle Spiele für Ihre Vereine, Ihre Unternehmen oder Ihre Stadt.
             </div>
-
             <div class="developer">
                 Entwickelt von <span>Blankenhagen Spieleentwicklung</span>
             </div>
 
             <div class="menu-group">
                 <label for="selectMode">Spielmodus:</label>
-
                 <select id="selectMode" disabled>
-                    <option value="tet" selected>
-                        Tet (1 gegen 1, je 3 Kugeln)
-                    </option>
+                    <option value="tet" selected>Tet (1 gegen 1, je 3 Kugeln)</option>
                 </select>
             </div>
 
             <div class="menu-group">
                 <label for="selectDifficulty">KI-Schwierigkeit:</label>
-
                 <select id="selectDifficulty">
-                    <option value="leicht">
-                        Leicht (Entspanntes Spiel)
-                    </option>
-
-                    <option value="mittel" selected>
-                        Mittel (Taktisch)
-                    </option>
-
-                    <option value="schwer">
-                        Herausfordernd (Starker Tireur)
-                    </option>
+                    <option value="leicht">Leicht (Entspanntes Spiel)</option>
+                    <option value="mittel" selected>Mittel (Taktisch)</option>
+                    <option value="schwer">Herausfordernd (Starker Tireur)</option>
                 </select>
             </div>
 
-            <button class="btn" id="startBtn" onclick="startGame()">
-                Spiel starten
-            </button>
+            <button class="btn" id="startBtn" onclick="startGame()">Spiel starten</button>
 
             <div class="legal-info">
                 <h3>Impressum</h3>
-
                 Blankenhagen Spieleentwicklung<br>
                 73614 Schorndorf<br>
                 E-Mail: spieleentwicklung@freenet.de
 
                 <h3>Datenschutz</h3>
-
-                Es werden keine personenbezogenen Daten gespeichert
-                oder an Dritte weitergegeben. Die Nutzung erfolgt lokal
-                auf Ihrem Gerät.
+                Es werden keine personenbezogenen Daten gespeichert oder an Dritte weitergegeben. Die Nutzung erfolgt lokal auf Ihrem Gerät.
             </div>
-
         </div>
     </div>
-
 
     <div id="gameApp">
-
         <div class="game-header">
-
             <h2>Pétanque Master (Tet)</h2>
-
-            <div class="status-bar" id="statusBar">
-                Bereit zum Start
-            </div>
-
+            <div class="status-bar" id="statusBar">Bereit zum Start</div>
         </div>
 
-
-        <!-- SPIELFELD + PUNKTE LINKS/RECHTS -->
         <div class="play-layout">
-
             <div class="score-boards">
-
                 <div class="counter-panel blue-panel">
-
-                    <div class="counter-title">
-                        Du (Blau)
-                        [Rest: <span id="restBlue">3</span>]
-                    </div>
-
+                    <div class="counter-title">Du (Blau) [Rest: <span id="restBlue">3</span>]</div>
                     <div class="score-list" id="counter-blue"></div>
-
                 </div>
-
 
                 <div class="counter-panel red-panel">
-
-                    <div class="counter-title" id="kiTitle">
-                        KI (Rot)
-                        [Rest: <span id="restRed">3</span>]
-                    </div>
-
+                    <div class="counter-title" id="kiTitle">KI (Rot) [Rest: <span id="restRed">3</span>]</div>
                     <div class="score-list" id="counter-red"></div>
-
                 </div>
-
             </div>
-
 
             <div id="terrain">
-
                 <svg id="directionSvg">
-
                     <defs>
-
-                        <marker
-                            id="arrowhead"
-                            markerWidth="10"
-                            markerHeight="7"
-                            refX="6"
-                            refY="3.5"
-                            orient="auto">
-
-                            <polygon
-                                points="0 0, 10 3.5, 0 7"
-                                fill="#ffeb3b">
-                            </polygon>
-
+                        <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="6" refY="3.5" orient="auto">
+                            <polygon points="0 0, 10 3.5, 0 7" fill="#ffeb3b"></polygon>
                         </marker>
-
                     </defs>
-
-                    <line
-                        id="aimLine"
-                        x1="150"
-                        y1="258"
-                        x2="150"
-                        y2="170"
-                        stroke="#ffeb3b"
-                        stroke-width="3"
-                        marker-end="url(#arrowhead)">
-                    </line>
-
+                    <line id="aimLine" x1="150" y1="258" x2="150" y2="170" stroke="#ffeb3b" stroke-width="3" marker-end="url(#arrowhead)"></line>
                 </svg>
 
-
-                <div
-                    class="circle-abwurf"
-                    id="abwurfKreis">
-                </div>
-
-
-                <div
-                    class="target-ball"
-                    id="targetBall">
-                </div>
-
-
+                <div class="circle-abwurf" id="abwurfKreis"></div>
+                <div class="target-ball" id="targetBall"></div>
                 <div id="ballsContainer"></div>
 
-
                 <div id="endScreenOverlay">
-
-                    <h3 id="endScreenTitle">
-                        Turniersieg!
-                    </h3>
-
-                    <p id="endScreenText">
-                        Möchtest du noch eine Runde spielen?
-                    </p>
-
+                    <h3 id="endScreenTitle">Turniersieg!</h3>
+                    <p id="endScreenText">Möchtest du noch eine Runde spielen?</p>
                     <div class="end-btn-group">
-
-                        <button
-                            class="btn"
-                            onclick="startNewGameFromOverlay()">
-                            Noch eine Runde spielen
-                        </button>
-
-                        <button
-                            class="btn"
-                            style="background-color: #555;"
-                            onclick="goToMainStartScreen()">
-                            Zurück zum Start
-                        </button>
-
+                        <button class="btn" onclick="startNewGameFromOverlay()">Noch eine Runde spielen</button>
+                        <button class="btn" style="background-color: #555;" onclick="goToMainStartScreen()">Zurück zum Start</button>
                     </div>
-
                 </div>
-
             </div>
-
         </div>
-
 
         <div class="control-panel">
-
             <div class="power-slider-container">
-
-                <label
-                    for="powerRange"
-                    id="powerLabel">
-                    Kraft: 70%
-                </label>
-
-                <input
-                    type="range"
-                    id="powerRange"
-                    min="20"
-                    max="112"
-                    value="78">
-
+                <label for="powerRange" id="powerLabel">Kraft: 70%</label>
+                <input type="range" id="powerRange" min="20" max="112" value="78">
             </div>
-
-
-            <button
-                class="btn-wurf"
-                id="btnWurf"
-                onclick="executePlayerThrow()">
-                Wurf im Bogen ausführen
-            </button>
-
+            <button class="btn-wurf" id="btnWurf" onclick="executePlayerThrow()">Wurf im Bogen ausführen</button>
         </div>
-
     </div>
 
-
     <script>
-
         let scoreBlue = 0;
         let scoreRed = 0;
         let currentTurn = 'blue';
@@ -735,13 +596,7 @@
         let aimY = 140;
 
         const terrain = document.getElementById('terrain');
-
         let audioCtx = null;
-
-
-        /* NEU:
-           Abwurfpunkt passt sich automatisch an die Spielfeldgröße an.
-           Spielmechanik bleibt ansonsten unverändert. */
 
         function getThrowStartX() {
             return terrain.clientWidth / 2;
@@ -751,1750 +606,474 @@
             return terrain.clientHeight - 42;
         }
 
-
         function playMetalClankSound(isHardHit) {
-
             try {
-
                 if (!audioCtx) {
-
-                    audioCtx =
-                        new (window.AudioContext ||
-                        window.webkitAudioContext)();
-
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 }
-
                 if (audioCtx.state === 'suspended') {
                     audioCtx.resume();
                 }
-
                 let osc = audioCtx.createOscillator();
                 let gainNode = audioCtx.createGain();
 
                 osc.type = 'triangle';
+                let baseFreq = isHardHit ? 850 : 600;
 
-                let baseFreq =
-                    isHardHit ? 850 : 600;
+                osc.frequency.setValueAtTime(baseFreq, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(150, audioCtx.currentTime + 0.15);
 
-                osc.frequency.setValueAtTime(
-                    baseFreq,
-                    audioCtx.currentTime
-                );
-
-                osc.frequency.exponentialRampToValueAtTime(
-                    150,
-                    audioCtx.currentTime + 0.15
-                );
-
-                gainNode.gain.setValueAtTime(
-                    isHardHit ? 0.7 : 0.4,
-                    audioCtx.currentTime
-                );
-
-                gainNode.gain.exponentialRampToValueAtTime(
-                    0.001,
-                    audioCtx.currentTime + 0.15
-                );
+                gainNode.gain.setValueAtTime(isHardHit ? 0.7 : 0.4, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
 
                 osc.connect(gainNode);
                 gainNode.connect(audioCtx.destination);
 
                 osc.start();
-
-                osc.stop(
-                    audioCtx.currentTime + 0.15
-                );
-
+                osc.stop(audioCtx.currentTime + 0.15);
             } catch(e) {}
-
         }
 
-
         function startGame() {
-
             gameMode = 'tet';
-
-            difficulty =
-                document.getElementById(
-                    'selectDifficulty'
-                ).value;
+            difficulty = document.getElementById('selectDifficulty').value;
 
             ballsLeftBlue = 3;
             ballsLeftRed = 3;
-
             scoreBlue = 0;
             scoreRed = 0;
 
             isProcessing = false;
             lastRoundWinner = 'blue';
 
-            document.getElementById(
-                'endScreenOverlay'
-            ).style.display = 'none';
-
-            document.getElementById(
-                'kiTitle'
-            ).innerHTML =
-                `KI (${difficulty.toUpperCase()}) [Rest: <span id="restRed">${ballsLeftRed}</span>]`;
-
-            document.getElementById(
-                'startScreen'
-            ).style.display = 'none';
-
-            document.getElementById(
-                'gameApp'
-            ).style.display = 'flex';
+            document.getElementById('endScreenOverlay').style.display = 'none';
+            document.getElementById('kiTitle').innerHTML = `KI (${difficulty.toUpperCase()}) [Rest: <span id="restRed">${ballsLeftRed}</span>]`;
+            document.getElementById('startScreen').style.display = 'none';
+            document.getElementById('gameApp').style.display = 'flex';
 
             randomizeTargetPosition();
-
             initGame();
-
         }
 
+        const powerRangeInput = document.getElementById('powerRange');
+        const powerLabel = document.getElementById('powerLabel');
 
-        const powerRangeInput =
-            document.getElementById('powerRange');
-
-        const powerLabel =
-            document.getElementById('powerLabel');
-
-
-        powerRangeInput.addEventListener(
-            'input',
-            (e) => {
-
-                let val =
-                    parseInt(e.target.value);
-
-                let percent =
-                    Math.round((val / 112) * 100);
-
-                if (percent > 85) {
-
-                    powerLabel.innerText =
-                        `Kraft: ${percent}% (Schuss)`;
-
-                } else {
-
-                    powerLabel.innerText =
-                        `Kraft: ${percent}%`;
-
-                }
-
+        powerRangeInput.addEventListener('input', (e) => {
+            let val = parseInt(e.target.value);
+            let percent = Math.round((val / 112) * 100);
+            if (percent > 85) {
+                powerLabel.innerText = `Kraft: ${percent}% (Schuss)`;
+            } else {
+                powerLabel.innerText = `Kraft: ${percent}%`;
             }
-        );
-
+        });
 
         function randomizeTargetPosition() {
-
-            let fieldWidth =
-                terrain.clientWidth || 300;
-
-            targetBallObj.x =
-                55 +
-                Math.random() *
-                Math.max(80, fieldWidth - 110);
-
-            targetBallObj.y =
-                60 +
-                Math.random() * 70;
-
+            let fieldWidth = terrain.clientWidth || 300;
+            targetBallObj.x = 55 + Math.random() * Math.max(80, fieldWidth - 110);
+            targetBallObj.y = 60 + Math.random() * 70;
             targetBallObj.vx = 0;
             targetBallObj.vy = 0;
-
             targetBallObj.out = false;
-
             updateTargetBallDOM();
-
         }
-
 
         function updateTargetBallDOM() {
-
-            const targetEl =
-                document.getElementById(
-                    'targetBall'
-                );
-
+            const targetEl = document.getElementById('targetBall');
             if (targetBallObj.out) {
-
                 targetEl.style.display = 'none';
-
             } else {
-
                 targetEl.style.display = 'block';
-
-                targetEl.style.left =
-                    targetBallObj.x + 'px';
-
-                targetEl.style.top =
-                    targetBallObj.y + 'px';
-
+                targetEl.style.left = targetBallObj.x + 'px';
+                targetEl.style.top = targetBallObj.y + 'px';
             }
-
         }
-
 
         function initGame() {
-
             updateCounters();
-
             updateRestDisplay();
-
-            updateAimLineFromCoords(
-                getThrowStartX(),
-                140
-            );
-
+            updateAimLineFromCoords(getThrowStartX(), 140);
             determineNextTurnByRules();
-
         }
-
 
         function updateCounters() {
-
-            createScoreList(
-                'counter-blue',
-                scoreBlue
-            );
-
-            createScoreList(
-                'counter-red',
-                scoreRed
-            );
-
+            createScoreList('counter-blue', scoreBlue);
+            createScoreList('counter-red', scoreRed);
         }
 
-
-        function createScoreList(
-            containerId,
-            currentScore
-        ) {
-
-            const container =
-                document.getElementById(
-                    containerId
-                );
-
+        function createScoreList(containerId, currentScore) {
+            const container = document.getElementById(containerId);
             container.innerHTML = '';
-
             for (let i = 0; i <= 13; i++) {
-
-                let item =
-                    document.createElement('div');
-
-                item.className =
-                    'score-item' +
-                    (i === currentScore
-                        ? ' active'
-                        : '');
-
+                let item = document.createElement('div');
+                item.className = 'score-item' + (i === currentScore ? ' active' : '');
                 item.innerText = i;
-
                 container.appendChild(item);
-
             }
-
         }
-
 
         function updateRestDisplay() {
-
-            document.querySelector(
-                '.blue-panel .counter-title'
-            ).innerHTML =
-                `Du (Blau) [Rest: <span>${ballsLeftBlue}</span>]`;
-
-            document.querySelector(
-                '.red-panel .counter-title'
-            ).innerHTML =
-                `KI (${difficulty.toUpperCase()}) [Rest: <span>${ballsLeftRed}</span>]`;
-
+            document.querySelector('.blue-panel .counter-title').innerHTML = `Du (Blau) [Rest: <span>${ballsLeftBlue}</span>]`;
+            document.querySelector('.red-panel .counter-title').innerHTML = `KI (${difficulty.toUpperCase()}) [Rest: <span>${ballsLeftRed}</span>]`;
         }
 
-
         function determineNextTurnByRules() {
-
             if (isProcessing) return;
 
-
             if (targetBallObj.out) {
-
                 isProcessing = true;
-
-                document.getElementById(
-                    'btnWurf'
-                ).disabled = true;
-
-                document.getElementById(
-                    'statusBar'
-                ).innerText =
-                    "Schweinchen im AUS! Regel-Auswertung...";
-
-                setTimeout(
-                    handleTargetOutRule,
-                    1500
-                );
-
+                document.getElementById('btnWurf').disabled = true;
+                document.getElementById('statusBar').innerText = "Schweinchen im AUS! Regel-Auswertung...";
+                setTimeout(handleTargetOutRule, 1500);
                 return;
             }
 
-
-            if (
-                ballsLeftBlue <= 0 &&
-                ballsLeftRed <= 0
-            ) {
-
+            if (ballsLeftBlue <= 0 && ballsLeftRed <= 0) {
                 isProcessing = true;
-
-                document.getElementById(
-                    'btnWurf'
-                ).disabled = true;
-
-                document.getElementById(
-                    'statusBar'
-                ).innerText =
-                    "Aufnahme beendet! Auswertung...";
-
-                setTimeout(
-                    endRundeAutomatically,
-                    1200
-                );
-
+                document.getElementById('btnWurf').disabled = true;
+                document.getElementById('statusBar').innerText = "Aufnahme beendet! Auswertung...";
+                setTimeout(endRundeAutomatically, 1200);
                 return;
             }
-
 
             if (ballsLeftBlue <= 0) {
-
                 currentTurn = 'red';
-
             } else if (ballsLeftRed <= 0) {
-
                 currentTurn = 'blue';
-
-            } else if (
-                playedBalls.filter(
-                    b => !b.out
-                ).length === 0
-            ) {
-
-                currentTurn =
-                    lastRoundWinner;
-
+            } else if (playedBalls.filter(b => !b.out).length === 0) {
+                currentTurn = lastRoundWinner;
             } else {
-
-                let closestTeam =
-                    getClosestTeamToTarget();
-
-                currentTurn =
-                    closestTeam === 'blue'
-                        ? 'red'
-                        : 'blue';
-
+                let closestTeam = getClosestTeamToTarget();
+                currentTurn = closestTeam === 'blue' ? 'red' : 'blue';
             }
-
 
             updateStatus();
 
-
             if (currentTurn === 'red') {
-
-                document.getElementById(
-                    'btnWurf'
-                ).disabled = true;
-
-                setTimeout(
-                    computerTurn,
-                    1000
-                );
-
+                document.getElementById('btnWurf').disabled = true;
+                setTimeout(computerTurn, 1000);
             } else {
-
-                document.getElementById(
-                    'btnWurf'
-                ).disabled = false;
-
+                document.getElementById('btnWurf').disabled = false;
             }
-
         }
 
-
         function handleTargetOutRule() {
+            let blueHasBalls = ballsLeftBlue > 0;
+            let redHasBalls = ballsLeftRed > 0;
 
-            let blueHasBalls =
-                ballsLeftBlue > 0;
-
-            let redHasBalls =
-                ballsLeftRed > 0;
-
-
-            if (
-                blueHasBalls &&
-                redHasBalls
-            ) {
-
-                document.getElementById(
-                    'statusBar'
-                ).innerText =
-                    "Schweinchen im Aus & beide haben Kugeln: Aufnahme wird annulliert!";
-
-                setTimeout(
-                    () => {
-                        resetRundeData();
-                    },
-                    2500
-                );
-
-            } else if (
-                !blueHasBalls &&
-                !redHasBalls
-            ) {
-
-                document.getElementById(
-                    'statusBar'
-                ).innerText =
-                    "Schweinchen im Aus & keine Kugeln übrig: Keine Punkte.";
-
-                setTimeout(
-                    () => {
-                        resetRundeData();
-                    },
-                    2500
-                );
-
+            if (blueHasBalls && redHasBalls) {
+                document.getElementById('statusBar').innerText = "Schweinchen im Aus & beide haben Kugeln: Aufnahme wird annulliert!";
+                setTimeout(() => { resetRundeData(); }, 2500);
+            } else if (!blueHasBalls && !redHasBalls) {
+                document.getElementById('statusBar').innerText = "Schweinchen im Aus & keine Kugeln übrig: Keine Punkte.";
+                setTimeout(() => { resetRundeData(); }, 2500);
             } else {
-
-                let scoringTeam =
-                    blueHasBalls
-                        ? 'blue'
-                        : 'red';
-
-                let remainingBalls =
-                    scoringTeam === 'blue'
-                        ? ballsLeftBlue
-                        : ballsLeftRed;
-
-                let earnedPoints =
-                    remainingBalls;
-
+                let scoringTeam = blueHasBalls ? 'blue' : 'red';
+                let remainingBalls = scoringTeam === 'blue' ? ballsLeftBlue : ballsLeftRed;
+                let earnedPoints = remainingBalls;
 
                 if (scoringTeam === 'blue') {
-
                     scoreBlue += earnedPoints;
-
-                    if (scoreBlue > 13)
-                        scoreBlue = 13;
-
+                    if (scoreBlue > 13) scoreBlue = 13;
                     lastRoundWinner = 'blue';
-
-                    document.getElementById(
-                        'statusBar'
-                    ).innerText =
-                        `Schweinchen im Aus! Du erhältst ${earnedPoints} Punkt(e).`;
-
+                    document.getElementById('statusBar').innerText = `Schweinchen im Aus! Du erhältst ${earnedPoints} Punkt(e).`;
                 } else {
-
                     scoreRed += earnedPoints;
-
-                    if (scoreRed > 13)
-                        scoreRed = 13;
-
+                    if (scoreRed > 13) scoreRed = 13;
                     lastRoundWinner = 'red';
-
-                    document.getElementById(
-                        'statusBar'
-                    ).innerText =
-                        `Schweinchen im Aus! KI erhält ${earnedPoints} Punkt(e).`;
-
+                    document.getElementById('statusBar').innerText = `Schweinchen im Aus! KI erhält ${earnedPoints} Punkt(e).`;
                 }
-
 
                 updateCounters();
 
-
-                setTimeout(
-                    () => {
-
-                        if (
-                            scoreBlue >= 13 ||
-                            scoreRed >= 13
-                        ) {
-
-                            handleMatchEnd();
-
-                        } else {
-
-                            resetRundeData();
-
-                        }
-
-                    },
-                    2500
-                );
-
+                setTimeout(() => {
+                    if (scoreBlue >= 13 || scoreRed >= 13) {
+                        handleMatchEnd();
+                    } else {
+                        resetRundeData();
+                    }
+                }, 2500);
             }
-
         }
 
-
         function getClosestTeamToTarget() {
-
-            let activeBalls =
-                playedBalls.filter(
-                    b => !b.out
-                );
-
-            if (
-                activeBalls.length === 0 ||
-                targetBallObj.out
-            ) {
+            let activeBalls = playedBalls.filter(b => !b.out);
+            if (activeBalls.length === 0 || targetBallObj.out) {
                 return null;
             }
 
+            let closest = activeBalls[0];
+            let minDistance = Math.hypot(closest.x - targetBallObj.x, closest.y - targetBallObj.y);
 
-            let closest =
-                activeBalls[0];
-
-            let minDistance =
-                Math.hypot(
-                    closest.x -
-                    targetBallObj.x,
-
-                    closest.y -
-                    targetBallObj.y
-                );
-
-
-            for (
-                let i = 1;
-                i < activeBalls.length;
-                i++
-            ) {
-
-                let dist =
-                    Math.hypot(
-                        activeBalls[i].x -
-                        targetBallObj.x,
-
-                        activeBalls[i].y -
-                        targetBallObj.y
-                    );
-
-                if (
-                    dist < minDistance
-                ) {
-
+            for (let i = 1; i < activeBalls.length; i++) {
+                let dist = Math.hypot(activeBalls[i].x - targetBallObj.x, activeBalls[i].y - targetBallObj.y);
+                if (dist < minDistance) {
                     minDistance = dist;
-                    closest =
-                        activeBalls[i];
-
+                    closest = activeBalls[i];
                 }
-
             }
-
             return closest.team;
-
         }
-
 
         function getDistanceFromTargetInCm(ball) {
-
-            let pixelDist =
-                Math.hypot(
-                    ball.x -
-                    targetBallObj.x,
-
-                    ball.y -
-                    targetBallObj.y
-                );
-
-            return Math.round(
-                pixelDist * 2.2
-            );
-
+            let pixelDist = Math.hypot(ball.x - targetBallObj.x, ball.y - targetBallObj.y);
+            return Math.round(pixelDist * 2.2);
         }
 
-
-        function updateStatus(
-            lastThrownBall = null,
-            teamName = ""
-        ) {
-
-            let leadingTeam =
-                getClosestTeamToTarget();
-
-            let leadingText =
-                leadingTeam === 'blue'
-                    ? 'Du liegst vorne'
-                    : (
-                        leadingTeam === 'red'
-                            ? 'KI liegt vorne'
-                            : 'Noch keine Kugel'
-                    );
-
-
-            if (lastThrownBall) {
-
-                if (lastThrownBall.out) {
-
-                    document.getElementById(
-                        'statusBar'
-                    ).innerText =
-                        `Wurf im AUS! Kugel hat das Spielfeld verlassen.`;
-
-                } else {
-
-                    let cm =
-                        getDistanceFromTargetInCm(
-                            lastThrownBall
-                        );
-
-                    let teamLabel =
-                        teamName === 'blue'
-                            ? 'Dein Wurf'
-                            : 'KI-Wurf';
-
-                    document.getElementById(
-                        'statusBar'
-                    ).innerText =
-                        `${teamLabel}: ${cm} cm von der Sau! (${leadingText})`;
-
-                }
-
-            } else {
-
-                if (
-                    currentTurn === 'blue'
-                ) {
-
-                    document.getElementById(
-                        'statusBar'
-                    ).innerText =
-                        `Du bist am Zug (${leadingText}) | Ziel anvisieren & Kraft wählen`;
-
-                } else {
-
-                    document.getElementById(
-                        'statusBar'
-                    ).innerText =
-                        `KI ist am Zug (${leadingText}) | Taktischer Spielzug...`;
-
-                }
-
-            }
-
+        function updateStatus(lastThrownBall = null, teamName = "") {
+            let leadingTeam = getClosestTeamToTarget();
+            let leadingText = leadingTeam === 'blue' ? 'Du liegst vorne' : (leadingTeam === 'red' ? 'KI liegt vorne' : 'Keine Kugel im Spiel');
+            document.getElementById('statusBar').innerText = `Am Zug: ${currentTurn === 'blue' ? 'Du (Blau)' : 'KI (Rot)'} | ${leadingText}`;
         }
 
-
-        terrain.addEventListener(
-            'pointerdown',
-            (e) => {
-
-                if (
-                    currentTurn !== 'blue' ||
-                    ballsLeftBlue <= 0 ||
-                    isProcessing
-                ) {
-                    return;
-                }
-
-
-                const rect =
-                    terrain.getBoundingClientRect();
-
-                let clickX =
-                    e.clientX -
-                    rect.left;
-
-                let clickY =
-                    e.clientY -
-                    rect.top;
-
-
-                aimX = clickX;
-                aimY = clickY;
-
-                updateAimLineFromCoords(
-                    clickX,
-                    clickY
-                );
-
-            }
-        );
-
-
-        function updateAimLineFromCoords(
-            targetX,
-            targetY
-        ) {
-
-            const startX =
-                getThrowStartX();
-
-            const startY =
-                getThrowStartY();
-
-            let dx =
-                targetX - startX;
-
-            let dy =
-                targetY - startY;
-
-            let dist =
-                Math.hypot(dx, dy) || 1;
-
-            let fixedLength = 90;
-
-
-            let line =
-                document.getElementById(
-                    'aimLine'
-                );
-
-            line.setAttribute(
-                'x1',
-                startX
-            );
-
-            line.setAttribute(
-                'y1',
-                startY
-            );
-
-            line.setAttribute(
-                'x2',
-                startX +
-                (dx / dist) *
-                fixedLength
-            );
-
-            line.setAttribute(
-                'y2',
-                startY +
-                (dy / dist) *
-                fixedLength
-            );
-
+        function updateAimLineFromCoords(targetX, targetY) {
+            aimX = targetX;
+            aimY = targetY;
+            const aimLine = document.getElementById('aimLine');
+            let startX = getThrowStartX();
+            let startY = getThrowStartY();
+            aimLine.setAttribute('x1', startX);
+            aimLine.setAttribute('y1', startY);
+            aimLine.setAttribute('x2', aimX);
+            aimLine.setAttribute('y2', aimY);
         }
 
+        terrain.addEventListener('pointermove', (e) => {
+            if (currentTurn !== 'blue' || isProcessing) return;
+            const rect = terrain.getBoundingClientRect();
+            let clientX = e.clientX - rect.left;
+            let clientY = e.clientY - rect.top;
+            
+            let startX = getThrowStartX();
+            let startY = getThrowStartY();
+            
+            if (clientY >= startY - 10) clientY = startY - 10;
+            if (clientY < 20) clientY = 20;
+            if (clientX < 15) clientX = 15;
+            if (clientX > terrain.clientWidth - 15) clientX = terrain.clientWidth - 15;
+
+            updateAimLineFromCoords(clientX, clientY);
+        });
 
         function executePlayerThrow() {
-
-            if (
-                currentTurn !== 'blue' ||
-                ballsLeftBlue <= 0 ||
-                isProcessing
-            ) {
-                return;
-            }
-
-
+            if (currentTurn !== 'blue' || isProcessing || ballsLeftBlue <= 0) return;
             isProcessing = true;
+            document.getElementById('btnWurf').disabled = true;
 
-            document.getElementById(
-                'btnWurf'
-            ).disabled = true;
-
-
-            let powerVal =
-                parseInt(
-                    document.getElementById(
-                        'powerRange'
-                    ).value
-                );
-
-
-            const startX =
-                getThrowStartX();
-
-            const startY =
-                getThrowStartY();
-
-
-            let dx =
-                aimX - startX;
-
-            let dy =
-                aimY - startY;
-
-            let dist =
-                Math.hypot(dx, dy) || 1;
-
-
-            let powerFactor =
-                powerVal / 78;
-
-            let maxReach =
-                180 * powerFactor;
-
-
-            let impactX =
-                startX +
-                (dx / dist) *
-                Math.min(
-                    dist * powerFactor,
-                    maxReach
-                );
-
-            let impactY =
-                startY +
-                (dy / dist) *
-                Math.min(
-                    dist * powerFactor,
-                    maxReach
-                );
-
-
+            let powerVal = parseInt(powerRangeInput.value);
             ballsLeftBlue--;
-
             updateRestDisplay();
 
-            startArcThrowSimulation(
-                'blue',
-                startX,
-                startY,
-                impactX,
-                impactY,
-                powerVal
-            );
+            let startX = getThrowStartX();
+            let startY = getThrowStartY();
+            let dx = aimX - startX;
+            let dy = aimY - startY;
+            let dist = Math.hypot(dx, dy);
 
+            let factor = (powerVal / 78) * (dist / 100);
+            let targetFinalX = startX + dx * factor;
+            let targetFinalY = startY + dy * factor;
+
+            animateThrow('blue', startX, startY, targetFinalX, targetFinalY, () => {
+                isProcessing = false;
+                determineNextTurnByRules();
+            });
         }
 
-
-        // TAKTISCHE KI-LOGIK
         function computerThrow() {
-
-            if (
-                ballsLeftRed <= 0 ||
-                isProcessing
-            ) {
-                return;
-            }
-
+            if (currentTurn !== 'red' || isProcessing || ballsLeftRed <= 0) return;
             isProcessing = true;
-
-
-            const startX =
-                getThrowStartX();
-
-            const startY =
-                getThrowStartY();
-
-
-            let closestTeam =
-                getClosestTeamToTarget();
-
-            let activeBlueBalls =
-                playedBalls.filter(
-                    b =>
-                        !b.out &&
-                        b.team === 'blue'
-                );
-
-
-            let targetX;
-            let targetY;
-            let powerVal;
-
-
-            let shouldShoot =
-                (
-                    closestTeam === 'blue' &&
-                    activeBlueBalls.length > 0 &&
-                    difficulty !== 'leicht'
-                );
-
-
-            if (shouldShoot) {
-
-                let bestBlue =
-                    activeBlueBalls[0];
-
-                let minD =
-                    Math.hypot(
-                        bestBlue.x -
-                        targetBallObj.x,
-
-                        bestBlue.y -
-                        targetBallObj.y
-                    );
-
-
-                activeBlueBalls.forEach(
-                    b => {
-
-                        let d =
-                            Math.hypot(
-                                b.x -
-                                targetBallObj.x,
-
-                                b.y -
-                                targetBallObj.y
-                            );
-
-                        if (d < minD) {
-
-                            minD = d;
-                            bestBlue = b;
-
-                        }
-
-                    }
-                );
-
-
-                let scatter =
-                    difficulty === 'schwer'
-                        ? 8
-                        : 22;
-
-
-                targetX =
-                    bestBlue.x +
-                    (Math.random() - 0.5) *
-                    scatter;
-
-                targetY =
-                    bestBlue.y +
-                    (Math.random() - 0.5) *
-                    scatter;
-
-                powerVal = 105;
-
-            } else {
-
-                let scatter =
-                    difficulty === 'leicht'
-                        ? 45
-                        : (
-                            difficulty === 'mittel'
-                                ? 25
-                                : 12
-                        );
-
-
-                let angle =
-                    Math.random() *
-                    Math.PI *
-                    2;
-
-                let offsetDist =
-                    8 +
-                    Math.random() *
-                    20;
-
-
-                targetX =
-                    targetBallObj.x +
-                    Math.cos(angle) *
-                    offsetDist +
-                    (Math.random() - 0.5) *
-                    scatter;
-
-
-                targetY =
-                    targetBallObj.y +
-                    Math.sin(angle) *
-                    offsetDist +
-                    (Math.random() - 0.5) *
-                    scatter;
-
-
-                powerVal = 74;
-
-            }
-
 
             ballsLeftRed--;
-
             updateRestDisplay();
 
-            startArcThrowSimulation(
-                'red',
-                startX,
-                startY,
-                targetX,
-                targetY,
-                powerVal
-            );
+            let startX = getThrowStartX();
+            let startY = getThrowStartY();
 
+            let targetX = targetBallObj.x + (Math.random() * 40 - 20);
+            let targetY = targetBallObj.y + (Math.random() * 40 - 20);
+
+            if (difficulty === 'schwer' && Math.random() < 0.6) {
+                targetX = targetBallObj.x + (Math.random() * 10 - 5);
+                targetY = targetBallObj.y + (Math.random() * 10 - 5);
+            } else if (difficulty === 'leicht') {
+                targetX += (Math.random() * 30 - 15);
+                targetY += (Math.random() * 30 - 15);
+            }
+
+            animateThrow('red', startX, startY, targetX, targetY, () => {
+                isProcessing = false;
+                determineNextTurnByRules();
+            });
         }
 
+        function animateThrow(team, startX, startY, finalX, finalY, callback) {
+            let ballEl = document.createElement('div');
+            ballEl.className = `ball ${team === 'blue' ? 'blue-ball' : 'red-ball'}`;
+            ballEl.style.left = startX + 'px';
+            ballEl.style.top = startY + 'px';
+            document.getElementById('ballsContainer').appendChild(ballEl);
+
+            let startTime = performance.now();
+            let duration = 650;
+
+            function step(currentTime) {
+                let elapsed = currentTime - startTime;
+                let progress = Math.min(elapsed / duration, 1);
+                let easeProgress = 1 - Math.pow(1 - progress, 2);
+
+                let currentX = startX + (finalX - startX) * easeProgress;
+                let currentY = startY + (finalY - startY) * easeProgress;
+
+                ballEl.style.left = currentX + 'px';
+                ballEl.style.top = currentY + 'px';
+
+                if (progress < 1) {
+                    requestAnimationFrame(step);
+                } else {
+                    let newBall = {
+                        x: finalX,
+                        y: finalY,
+                        team: team,
+                        out: (finalX < 10 || finalX > terrain.clientWidth - 10 || finalY < 10 || finalY > terrain.clientHeight - 10)
+                    };
+
+                    if (newBall.out) {
+                        ballEl.remove();
+                    } else {
+                        playedBalls.push(newBall);
+                        checkCollisionsAndPhysics(newBall);
+                    }
+                    callback();
+                }
+            }
+            requestAnimationFrame(step);
+        }
+
+        function checkCollisionsAndPhysics(newBall) {
+            let targetDist = Math.hypot(newBall.x - targetBallObj.x, newBall.y - targetBallObj.y);
+            if (targetDist < 14 && !targetBallObj.out) {
+                playMetalClankSound(true);
+                let angle = Math.atan2(targetBallObj.y - newBall.y, targetBallObj.x - newBall.x);
+                targetBallObj.x += Math.cos(angle) * 22;
+                targetBallObj.y += Math.sin(angle) * 22;
+
+                if (targetBallObj.x < 12 || targetBallObj.x > terrain.clientWidth - 12 || targetBallObj.y < 12 || targetBallObj.y > terrain.clientHeight - 12) {
+                    targetBallObj.out = true;
+                }
+                updateTargetBallDOM();
+            }
+
+            playedBalls.forEach(b => {
+                if (b !== newBall && !b.out) {
+                    let d = Math.hypot(newBall.x - b.x, newBall.y - b.y);
+                    if (d < 18) {
+                        playMetalClankSound(false);
+                        let angle = Math.atan2(b.y - newBall.y, b.x - newBall.x);
+                        b.x += Math.cos(angle) * 12;
+                        b.y += Math.sin(angle) * 12;
+                        if (b.x < 10 || b.x > terrain.clientWidth - 10 || b.y < 10 || b.y > terrain.clientHeight - 10) {
+                            b.out = true;
+                        }
+                    }
+                }
+            });
+            redrawAllBalls();
+        }
+
+        function redrawAllBalls() {
+            const container = document.getElementById('ballsContainer');
+            container.innerHTML = '';
+            playedBalls.forEach(b => {
+                if (!b.out) {
+                    let el = document.createElement('div');
+                    el.className = `ball ${b.team === 'blue' ? 'blue-ball' : 'red-ball'}`;
+                    el.style.left = b.x + 'px';
+                    el.style.top = b.y + 'px';
+                    container.appendChild(el);
+                }
+            });
+        }
 
         function computerTurn() {
+            computerThrow();
+        }
 
-            if (
-                ballsLeftRed <= 0 ||
-                isProcessing
-            ) {
+        function endRundeAutomatically() {
+            let activeBalls = playedBalls.filter(b => !b.out);
+            if (activeBalls.length === 0 || targetBallObj.out) {
+                resetRundeData();
                 return;
             }
 
-            computerThrow();
+            let closestTeam = getClosestTeamToTarget();
+            let pointsGained = 0;
 
-        }
-
-
-        function startArcThrowSimulation(
-            team,
-            startX,
-            startY,
-            impactX,
-            impactY,
-            powerVal
-        ) {
-
-            let ballObj = {
-                x: startX,
-                y: startY,
-                vx: 0,
-                vy: 0,
-                team: team,
-                radius: 9,
-                out: false
-            };
-
-
-            playedBalls.push(ballObj);
-
-
-            let totalFrames = 30;
-            let frame = 0;
-
-
-            function arcStep() {
-
-                frame++;
-
-                let t =
-                    frame /
-                    totalFrames;
-
-
-                ballObj.x =
-                    startX +
-                    (impactX - startX) *
-                    t;
-
-                ballObj.y =
-                    startY +
-                    (impactY - startY) *
-                    t;
-
-
-                let scale =
-                    1 +
-                    Math.sin(
-                        t * Math.PI
-                    ) *
-                    0.6;
-
-
-                redrawBalls();
-
-
-                let container =
-                    document.getElementById(
-                        'ballsContainer'
-                    );
-
-                let el =
-                    container.lastElementChild;
-
-
-                if (el) {
-
-                    el.style.transform =
-                        `translate(-50%, -50%) scale(${scale})`;
-
-                    el.style.zIndex = '20';
-
+            activeBalls.forEach(b => {
+                if (b.team === closestTeam) {
+                    let isCloserThanOpponent = true;
+                    activeBalls.forEach(opp => {
+                        if (opp.team !== closestTeam) {
+                            let distB = Math.hypot(b.x - targetBallObj.x, b.y - targetBallObj.y);
+                            let distOpp = Math.hypot(opp.x - targetBallObj.x, opp.y - targetBallObj.y);
+                            if (distB >= distOpp) isCloserThanOpponent = false;
+                        }
+                    });
+                    if (isCloserThanOpponent) pointsGained++;
                 }
+            });
 
-
-                if (
-                    frame <
-                    totalFrames
-                ) {
-
-                    requestAnimationFrame(
-                        arcStep
-                    );
-
-                } else {
-
-                    showDonneeMarker(
-                        impactX,
-                        impactY
-                    );
-
-
-                    let rollDx =
-                        impactX -
-                        startX;
-
-                    let rollDy =
-                        impactY -
-                        startY;
-
-                    let rollDist =
-                        Math.hypot(
-                            rollDx,
-                            rollDy
-                        ) || 1;
-
-
-                    let initialRollSpeed =
-                        powerVal / 25;
-
-
-                    ballObj.vx =
-                        (rollDx / rollDist) *
-                        initialRollSpeed;
-
-                    ballObj.vy =
-                        (rollDy / rollDist) *
-                        initialRollSpeed;
-
-
-                    playMetalClankSound(
-                        powerVal > 95
-                    );
-
-
-                    requestAnimationFrame(
-                        groundRollStep
-                    );
-
-                }
-
+            if (closestTeam === 'blue') {
+                scoreBlue += pointsGained;
+                if (scoreBlue > 13) scoreBlue = 13;
+                lastRoundWinner = 'blue';
+            } else {
+                scoreRed += pointsGained;
+                if (scoreRed > 13) scoreRed = 13;
+                lastRoundWinner = 'red';
             }
-
-
-            function groundRollStep() {
-
-                let allObjects = [
-                    ...playedBalls.filter(
-                        b => !b.out
-                    )
-                ];
-
-
-                if (!targetBallObj.out) {
-
-                    allObjects.push(
-                        targetBallObj
-                    );
-
-                }
-
-
-                allObjects.forEach(
-                    obj => {
-
-                        obj.x += obj.vx;
-                        obj.y += obj.vy;
-
-                        obj.vx *= 0.955;
-                        obj.vy *= 0.955;
-
-
-                        if (
-                            obj.x < -10 ||
-                            obj.x >
-                                terrain.clientWidth + 10 ||
-                            obj.y < -10 ||
-                            obj.y >
-                                terrain.clientHeight + 10
-                        ) {
-
-                            obj.out = true;
-
-                            obj.vx = 0;
-                            obj.vy = 0;
-
-                        }
-
-                    }
-                );
-
-
-                let hitOccurred = false;
-
-
-                for (
-                    let i = 0;
-                    i < allObjects.length;
-                    i++
-                ) {
-
-                    for (
-                        let j = i + 1;
-                        j < allObjects.length;
-                        j++
-                    ) {
-
-                        let b1 =
-                            allObjects[i];
-
-                        let b2 =
-                            allObjects[j];
-
-
-                        if (
-                            b1.out ||
-                            b2.out
-                        ) {
-                            continue;
-                        }
-
-
-                        let distX =
-                            b2.x - b1.x;
-
-                        let distY =
-                            b2.y - b1.y;
-
-                        let distance =
-                            Math.hypot(
-                                distX,
-                                distY
-                            );
-
-                        let minDist =
-                            b1.radius +
-                            b2.radius;
-
-
-                        if (
-                            distance <
-                            minDist
-                        ) {
-
-                            let overlap =
-                                minDist -
-                                distance;
-
-                            let nx =
-                                distX /
-                                (distance || 1);
-
-                            let ny =
-                                distY /
-                                (distance || 1);
-
-
-                            b1.x -=
-                                nx *
-                                overlap *
-                                0.5;
-
-                            b1.y -=
-                                ny *
-                                overlap *
-                                0.5;
-
-
-                            b2.x +=
-                                nx *
-                                overlap *
-                                0.5;
-
-                            b2.y +=
-                                ny *
-                                overlap *
-                                0.5;
-
-
-                            let kx =
-                                b1.vx -
-                                b2.vx;
-
-                            let ky =
-                                b1.vy -
-                                b2.vy;
-
-
-                            let p =
-                                2 *
-                                (
-                                    nx * kx +
-                                    ny * ky
-                                ) /
-                                2;
-
-
-                            b1.vx -=
-                                p *
-                                nx *
-                                0.8;
-
-                            b1.vy -=
-                                p *
-                                ny *
-                                0.8;
-
-
-                            b2.vx +=
-                                p *
-                                nx *
-                                0.8;
-
-                            b2.vy +=
-                                p *
-                                ny *
-                                0.8;
-
-
-                            hitOccurred = true;
-
-                        }
-
-                    }
-
-                }
-
-
-                if (hitOccurred) {
-                    playMetalClankSound(false);
-                }
-
-
-                redrawBalls();
-
-                updateTargetBallDOM();
-
-
-                let activeObjects =
-                    allObjects.filter(
-                        o => !o.out
-                    );
-
-
-                let maxSpeed =
-                    activeObjects.length > 0
-                        ? Math.max(
-                            ...activeObjects.map(
-                                o =>
-                                    Math.hypot(
-                                        o.vx,
-                                        o.vy
-                                    )
-                            )
-                        )
-                        : 0;
-
-
-                if (
-                    maxSpeed > 0.08
-                ) {
-
-                    requestAnimationFrame(
-                        groundRollStep
-                    );
-
-                } else {
-
-                    activeObjects.forEach(
-                        o => {
-
-                            o.vx = 0;
-                            o.vy = 0;
-
-                        }
-                    );
-
-
-                    updateStatus(
-                        ballObj,
-                        team
-                    );
-
-
-                    setTimeout(
-                        () => {
-
-                            isProcessing =
-                                false;
-
-                            determineNextTurnByRules();
-
-                        },
-                        600
-                    );
-
-                }
-
-            }
-
-
-            requestAnimationFrame(
-                arcStep
-            );
-
-        }
-
-
-        function showDonneeMarker(
-            x,
-            y
-        ) {
-
-            let donneeEl =
-                document.createElement(
-                    'div'
-                );
-
-            donneeEl.className =
-                'donnee-marker';
-
-            donneeEl.style.left =
-                x + 'px';
-
-            donneeEl.style.top =
-                y + 'px';
-
-
-            terrain.appendChild(
-                donneeEl
-            );
-
-
-            setTimeout(
-                () => {
-
-                    if (
-                        donneeEl &&
-                        donneeEl.parentNode
-                    ) {
-
-                        donneeEl.parentNode.removeChild(
-                            donneeEl
-                        );
-
-                    }
-
-                },
-                1000
-            );
-
-        }
-
-
-        function redrawBalls() {
-
-            const container =
-                document.getElementById(
-                    'ballsContainer'
-                );
-
-            container.innerHTML = '';
-
-
-            playedBalls.forEach(
-                b => {
-
-                    if (!b.out) {
-
-                        let el =
-                            document.createElement(
-                                'div'
-                            );
-
-                        el.className =
-                            `ball ${
-                                b.team === 'blue'
-                                    ? 'blue-ball'
-                                    : 'red-ball'
-                            }`;
-
-                        el.style.left =
-                            b.x + 'px';
-
-                        el.style.top =
-                            b.y + 'px';
-
-
-                        container.appendChild(
-                            el
-                        );
-
-                    }
-
-                }
-            );
-
-        }
-
-
-        function endRundeAutomatically() {
-
-            let closestTeam =
-                getClosestTeamToTarget();
-
-            let earnedPoints = 0;
-
-
-            if (closestTeam) {
-
-                let opponentTeam =
-                    closestTeam === 'blue'
-                        ? 'red'
-                        : 'blue';
-
-                let bestOpponentDist =
-                    9999;
-
-
-                playedBalls.forEach(
-                    b => {
-
-                        if (
-                            !b.out &&
-                            b.team ===
-                            opponentTeam
-                        ) {
-
-                            let d =
-                                Math.hypot(
-                                    b.x -
-                                    targetBallObj.x,
-
-                                    b.y -
-                                    targetBallObj.y
-                                );
-
-                            if (
-                                d <
-                                bestOpponentDist
-                            ) {
-                                bestOpponentDist = d;
-                            }
-
-                        }
-
-                    }
-                );
-
-
-                playedBalls.forEach(
-                    b => {
-
-                        if (
-                            !b.out &&
-                            b.team ===
-                            closestTeam
-                        ) {
-
-                            let d =
-                                Math.hypot(
-                                    b.x -
-                                    targetBallObj.x,
-
-                                    b.y -
-                                    targetBallObj.y
-                                );
-
-                            if (
-                                d <
-                                bestOpponentDist
-                            ) {
-                                earnedPoints++;
-                            }
-
-                        }
-
-                    }
-                );
-
-
-                if (earnedPoints === 0)
-                    earnedPoints = 1;
-
-
-                if (
-                    closestTeam === 'blue'
-                ) {
-
-                    scoreBlue +=
-                        earnedPoints;
-
-                    if (
-                        scoreBlue > 13
-                    ) {
-                        scoreBlue = 13;
-                    }
-
-                    lastRoundWinner =
-                        'blue';
-
-                    document.getElementById(
-                        'statusBar'
-                    ).innerText =
-                        `Aufnahme beendet: Du gewinnst ${earnedPoints} Punkt(e)!`;
-
-                } else {
-
-                    scoreRed +=
-                        earnedPoints;
-
-                    if (
-                        scoreRed > 13
-                    ) {
-                        scoreRed = 13;
-                    }
-
-                    lastRoundWinner =
-                        'red';
-
-                    document.getElementById(
-                        'statusBar'
-                    ).innerText =
-                        `Aufnahme beendet: KI gewinnt ${earnedPoints} Punkt(e)!`;
-
-                }
-
-            }
-
 
             updateCounters();
 
-
-            setTimeout(
-                () => {
-
-                    if (
-                        scoreBlue >= 13 ||
-                        scoreRed >= 13
-                    ) {
-
-                        handleMatchEnd();
-
-                    } else {
-
-                        resetRundeData();
-
-                    }
-
-                },
-                2000
-            );
-
+            if (scoreBlue >= 13 || scoreRed >= 13) {
+                handleMatchEnd();
+            } else {
+                document.getElementById('statusBar').innerText = `Aufnahme Ende! ${closestTeam === 'blue' ? 'Du' : 'KI'} erhält ${pointsGained} Punkt(e). Nächste Runde...`;
+                setTimeout(resetRundeData, 3000);
+            }
         }
-
 
         function handleMatchEnd() {
-
-            let overlay =
-                document.getElementById(
-                    'endScreenOverlay'
-                );
-
-            let titleEl =
-                document.getElementById(
-                    'endScreenTitle'
-                );
-
-            let textEl =
-                document.getElementById(
-                    'endScreenText'
-                );
-
-
-            if (
-                scoreBlue >= 13
-            ) {
-
-                titleEl.innerText =
-                    "Turniersieg!";
-
-                textEl.innerText =
-                    "Herzlichen Glückwunsch! Du hast das Turnier gewonnen. Möchtest du noch eine Runde spielen?";
-
-            } else {
-
-                titleEl.innerText =
-                    "Spiel beendet";
-
-                textEl.innerText =
-                    "Die KI hat das Match gewonnen. Möchtest du eine Revanche spielen?";
-
-            }
-
-
-            overlay.style.display =
-                'flex';
-
+            let winnerText = scoreBlue >= 13 ? "Glückwunsch! Du hast das Match gewonnen!" : "Die KI hat das Match gewonnen!";
+            document.getElementById('endScreenTitle').innerText = "Match beendet!";
+            document.getElementById('endScreenText').innerText = winnerText;
+            document.getElementById('endScreenOverlay').style.display = 'flex';
         }
-
-
-        function startNewGameFromOverlay() {
-
-            document.getElementById(
-                'endScreenOverlay'
-            ).style.display = 'none';
-
-            scoreBlue = 0;
-            scoreRed = 0;
-
-            isProcessing = false;
-
-            lastRoundWinner = 'blue';
-
-            randomizeTargetPosition();
-
-            resetRundeData();
-
-        }
-
-
-        function goToMainStartScreen() {
-
-            document.getElementById(
-                'endScreenOverlay'
-            ).style.display = 'none';
-
-            scoreBlue = 0;
-            scoreRed = 0;
-
-            isProcessing = false;
-
-            lastRoundWinner = 'blue';
-
-            document.getElementById(
-                'gameApp'
-            ).style.display = 'none';
-
-            document.getElementById(
-                'startScreen'
-            ).style.display = 'flex';
-
-        }
-
 
         function resetRundeData() {
-
             ballsLeftBlue = 3;
             ballsLeftRed = 3;
-
             playedBalls = [];
-
-            isProcessing = false;
-
-
+            document.getElementById('ballsContainer').innerHTML = '';
             randomizeTargetPosition();
-
-            redrawBalls();
-
-            updateRestDisplay();
-
-            determineNextTurnByRules();
-
+            isProcessing = false;
+            initGame();
         }
 
-    </script>
+        function startNewGameFromOverlay() {
+            document.getElementById('endScreenOverlay').style.display = 'none';
+            scoreBlue = 0;
+            scoreRed = 0;
+            lastRoundWinner = 'blue';
+            resetRundeData();
+        }
 
+        function goToMainStartScreen() {
+            document.getElementById('endScreenOverlay').style.display = 'none';
+            document.getElementById('gameApp').style.display = 'none';
+            document.getElementById('startScreen').style.display = 'flex';
+        }
+    </script>
+    <div style="display:none;">Dieser Text/Dieses Bild/Dieses Video/… wurde unter Zuhilfenahme einer Künstlichen Intelligenz erstellt und von einem Menschen überprüft.</div>
 </body>
 </html>
-```
