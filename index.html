@@ -1,13 +1,15 @@
+```html
 <!DOCTYPE html>
 <html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pétanque Master – Taktisches Regelwerk</title>
+
     <style>
         body {
             margin: 0;
-            padding: 10px;
+            padding: 6px;
             background-color: #0b1329;
             color: #fff;
             font-family: Arial, sans-serif;
@@ -147,7 +149,7 @@
 
         .game-header {
             text-align: center;
-            margin-bottom: 5px;
+            margin-bottom: 3px;
             width: 100%;
         }
 
@@ -159,11 +161,11 @@
         }
 
         .status-bar {
-            font-size: 0.8rem;
+            font-size: 0.76rem;
             color: #ffeb3b;
-            margin: 4px 0 8px 0;
+            margin: 3px 0 5px 0;
             background: rgba(255,255,255,0.08);
-            padding: 6px 10px;
+            padding: 5px 8px;
             border-radius: 4px;
             border: 1px solid rgba(255,255,255,0.15);
             text-align: center;
@@ -174,8 +176,8 @@
             display: flex;
             justify-content: space-between;
             width: 100%;
-            margin-bottom: 8px;
-            gap: 10px;
+            margin-bottom: 5px;
+            gap: 8px;
         }
 
         .counter-panel {
@@ -184,15 +186,15 @@
             align-items: center;
             background: rgba(255, 255, 255, 0.05);
             border-radius: 6px;
-            padding: 6px;
+            padding: 4px;
             flex: 1;
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .counter-title {
-            font-size: 0.7rem;
+            font-size: 0.68rem;
             font-weight: bold;
-            margin-bottom: 3px;
+            margin-bottom: 2px;
             text-transform: uppercase;
         }
 
@@ -236,7 +238,7 @@
             background-color: #ef4135;
         }
 
-        /* SPIELFELD UM CA. EIN DRITTEL VERKÜRZT */
+        /* SPIELFELD CA. EIN DRITTEL KÜRZER */
         #terrain {
             position: relative;
             width: 100%;
@@ -337,13 +339,13 @@
         }
 
         .control-panel {
-            margin-top: 8px;
+            margin-top: 5px;
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 5px;
             width: 100%;
             background: rgba(255,255,255,0.05);
-            padding: 8px;
+            padding: 6px;
             border-radius: 8px;
             border: 1px solid rgba(255,255,255,0.15);
             box-sizing: border-box;
@@ -352,7 +354,8 @@
         .power-slider-container {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
+            min-height: 24px;
         }
 
         .power-slider-container label {
@@ -371,8 +374,8 @@
             background-color: #ef4135;
             color: #fff;
             border: none;
-            padding: 9px;
-            font-size: 0.95rem;
+            padding: 8px;
+            font-size: 0.92rem;
             font-weight: bold;
             border-radius: 6px;
             cursor: pointer;
@@ -430,91 +433,234 @@
             width: 100%;
             max-width: 250px;
         }
+
+        /* Kleine Handybildschirme */
+        @media (max-height: 700px) {
+
+            body {
+                padding: 4px;
+            }
+
+            .game-header {
+                margin-bottom: 2px;
+            }
+
+            .game-header h2 {
+                font-size: 1.05rem;
+            }
+
+            .status-bar {
+                margin: 2px 0 4px 0;
+                padding: 4px 6px;
+                font-size: 0.7rem;
+            }
+
+            .score-boards {
+                margin-bottom: 4px;
+            }
+
+            .counter-panel {
+                padding: 3px;
+            }
+
+            .counter-title {
+                font-size: 0.64rem;
+            }
+
+            #terrain {
+                height: 215px;
+            }
+
+            .control-panel {
+                margin-top: 4px;
+                padding: 5px;
+                gap: 4px;
+            }
+
+            .btn-wurf {
+                padding: 7px;
+                font-size: 0.88rem;
+            }
+        }
+
+        /* Sehr kleine Handybildschirme */
+        @media (max-height: 620px) {
+
+            #terrain {
+                height: 195px;
+            }
+
+            .circle-abwurf {
+                bottom: 14px;
+            }
+        }
     </style>
 </head>
 
 <body>
 
     <div id="startScreen">
+
         <div class="start-container">
+
             <h1>Pétanque Master</h1>
 
             <div class="subtitle">
-                Wir entwickeln individuelle Spiele für Ihre Vereine, Ihre Unternehmen oder Ihre Stadt.
+                Wir entwickeln individuelle Spiele für Ihre Vereine,
+                Ihre Unternehmen oder Ihre Stadt.
             </div>
 
             <div class="developer">
-                Entwickelt von <span>Blankenhagen Spieleentwicklung</span>
+                Entwickelt von
+                <span>Blankenhagen Spieleentwicklung</span>
             </div>
 
             <div class="menu-group">
-                <label for="selectMode">Spielmodus:</label>
+
+                <label for="selectMode">
+                    Spielmodus:
+                </label>
+
                 <select id="selectMode" disabled>
-                    <option value="tet" selected>Tet (1 gegen 1, je 3 Kugeln)</option>
+                    <option value="tet" selected>
+                        Tet (1 gegen 1, je 3 Kugeln)
+                    </option>
                 </select>
+
             </div>
 
             <div class="menu-group">
-                <label for="selectDifficulty">KI-Schwierigkeit:</label>
+
+                <label for="selectDifficulty">
+                    KI-Schwierigkeit:
+                </label>
+
                 <select id="selectDifficulty">
-                    <option value="leicht">Leicht (Entspanntes Spiel)</option>
-                    <option value="mittel" selected>Mittel (Taktisch)</option>
-                    <option value="schwer">Herausfordernd (Starker Tireur)</option>
+
+                    <option value="leicht">
+                        Leicht (Entspanntes Spiel)
+                    </option>
+
+                    <option value="mittel" selected>
+                        Mittel (Taktisch)
+                    </option>
+
+                    <option value="schwer">
+                        Herausfordernd (Starker Tireur)
+                    </option>
+
                 </select>
+
             </div>
 
-            <button class="btn" id="startBtn" onclick="startGame()">Spiel starten</button>
+            <button
+                class="btn"
+                id="startBtn"
+                onclick="startGame()">
+                Spiel starten
+            </button>
 
             <div class="legal-info">
+
                 <h3>Impressum</h3>
+
                 Blankenhagen Spieleentwicklung<br>
                 73614 Schorndorf<br>
                 E-Mail: spieleentwicklung@freenet.de
 
                 <h3>Datenschutz</h3>
-                Es werden keine personenbezogenen Daten gespeichert oder an Dritte weitergegeben.
+
+                Es werden keine personenbezogenen Daten gespeichert
+                oder an Dritte weitergegeben.
                 Die Nutzung erfolgt lokal auf Ihrem Gerät.
+
             </div>
+
         </div>
+
     </div>
+
 
     <div id="gameApp">
 
         <div class="game-header">
-            <h2>Pétanque Master (Tet)</h2>
-            <div class="status-bar" id="statusBar">Bereit zum Start</div>
+
+            <h2>
+                Pétanque Master (Tet)
+            </h2>
+
+            <div
+                class="status-bar"
+                id="statusBar">
+                Bereit zum Start
+            </div>
+
         </div>
+
 
         <div class="score-boards">
 
             <div class="counter-panel blue-panel">
+
                 <div class="counter-title">
-                    Du (Blau) [Rest: <span id="restBlue">3</span>]
+
+                    Du (Blau)
+                    [Rest:
+                    <span id="restBlue">3</span>]
+
                 </div>
-                <div class="score-list" id="counter-blue"></div>
+
+                <div
+                    class="score-list"
+                    id="counter-blue">
+                </div>
+
             </div>
 
+
             <div class="counter-panel red-panel">
-                <div class="counter-title" id="kiTitle">
-                    KI (Rot) [Rest: <span id="restRed">3</span>]
+
+                <div
+                    class="counter-title"
+                    id="kiTitle">
+
+                    KI (Rot)
+                    [Rest:
+                    <span id="restRed">3</span>]
+
                 </div>
-                <div class="score-list" id="counter-red"></div>
+
+                <div
+                    class="score-list"
+                    id="counter-red">
+                </div>
+
             </div>
 
         </div>
 
+
         <div id="terrain">
 
             <svg id="directionSvg">
+
                 <defs>
-                    <marker id="arrowhead"
-                            markerWidth="10"
-                            markerHeight="7"
-                            refX="6"
-                            refY="3.5"
-                            orient="auto">
-                        <polygon points="0 0, 10 3.5, 0 7" fill="#ffeb3b" />
+
+                    <marker
+                        id="arrowhead"
+                        markerWidth="10"
+                        markerHeight="7"
+                        refX="6"
+                        refY="3.5"
+                        orient="auto">
+
+                        <polygon
+                            points="0 0, 10 3.5, 0 7"
+                            fill="#ffeb3b">
+                        </polygon>
+
                     </marker>
+
                 </defs>
 
                 <line
@@ -525,44 +671,73 @@
                     y2="110"
                     stroke="#ffeb3b"
                     stroke-width="3"
-                    marker-end="url(#arrowhead)"
-                />
+                    marker-end="url(#arrowhead)">
+                </line>
+
             </svg>
 
-            <div class="circle-abwurf" id="abwurfKreis"></div>
 
-            <div class="target-ball" id="targetBall"></div>
+            <div
+                class="circle-abwurf"
+                id="abwurfKreis">
+            </div>
+
+
+            <div
+                class="target-ball"
+                id="targetBall">
+            </div>
+
 
             <div id="ballsContainer"></div>
 
+
             <div id="endScreenOverlay">
-                <h3 id="endScreenTitle">Turniersieg!</h3>
+
+                <h3 id="endScreenTitle">
+                    Turniersieg!
+                </h3>
 
                 <p id="endScreenText">
                     Möchtest du noch eine Runde spielen?
                 </p>
 
                 <div class="end-btn-group">
-                    <button class="btn" onclick="startNewGameFromOverlay()">
+
+                    <button
+                        class="btn"
+                        onclick="startNewGameFromOverlay()">
+
                         Noch eine Runde spielen
+
                     </button>
 
                     <button
                         class="btn"
                         style="background-color: #555;"
                         onclick="goToMainStartScreen()">
+
                         Zurück zum Start
+
                     </button>
+
                 </div>
+
             </div>
 
         </div>
 
+
         <div class="control-panel">
 
             <div class="power-slider-container">
-                <label for="powerRange" id="powerLabel">
+
+                <label
+                    for="powerRange"
+                    id="powerLabel">
+
                     Kraft: 70%
+
                 </label>
 
                 <input
@@ -571,18 +746,23 @@
                     min="20"
                     max="112"
                     value="78">
+
             </div>
+
 
             <button
                 class="btn-wurf"
                 id="btnWurf"
                 onclick="executePlayerThrow()">
+
                 Wurf im Bogen ausführen
+
             </button>
 
         </div>
 
     </div>
+
 
 <script>
 
@@ -616,7 +796,8 @@ let lastRoundWinner = 'blue';
 let aimX = 200;
 let aimY = 110;
 
-const terrain = document.getElementById('terrain');
+const terrain =
+    document.getElementById('terrain');
 
 let audioCtx = null;
 
@@ -630,22 +811,28 @@ function playMetalClankSound(isHardHit) {
     try {
 
         if (!audioCtx) {
+
             audioCtx = new (
                 window.AudioContext ||
                 window.webkitAudioContext
             )();
+
         }
 
         if (audioCtx.state === 'suspended') {
             audioCtx.resume();
         }
 
-        let osc = audioCtx.createOscillator();
-        let gainNode = audioCtx.createGain();
+        let osc =
+            audioCtx.createOscillator();
+
+        let gainNode =
+            audioCtx.createGain();
 
         osc.type = 'triangle';
 
-        let baseFreq = isHardHit ? 850 : 600;
+        let baseFreq =
+            isHardHit ? 850 : 600;
 
         osc.frequency.setValueAtTime(
             baseFreq,
@@ -671,7 +858,10 @@ function playMetalClankSound(isHardHit) {
         gainNode.connect(audioCtx.destination);
 
         osc.start();
-        osc.stop(audioCtx.currentTime + 0.15);
+
+        osc.stop(
+            audioCtx.currentTime + 0.15
+        );
 
     } catch(e) {}
 
@@ -687,7 +877,9 @@ function startGame() {
     gameMode = 'tet';
 
     difficulty =
-        document.getElementById('selectDifficulty').value;
+        document.getElementById(
+            'selectDifficulty'
+        ).value;
 
     ballsLeftBlue = 3;
     ballsLeftRed = 3;
@@ -720,6 +912,7 @@ function startGame() {
     randomizeTargetPosition();
 
     initGame();
+
 }
 
 
@@ -737,10 +930,13 @@ powerRangeInput.addEventListener(
     'input',
     (e) => {
 
-        let val = parseInt(e.target.value);
+        let val =
+            parseInt(e.target.value);
 
         let percent =
-            Math.round((val / 112) * 100);
+            Math.round(
+                (val / 112) * 100
+            );
 
         if (percent > 85) {
 
@@ -776,6 +972,7 @@ function randomizeTargetPosition() {
     targetBallObj.out = false;
 
     updateTargetBallDOM();
+
 }
 
 
@@ -813,7 +1010,10 @@ function initGame() {
 
     updateRestDisplay();
 
-    updateAimLineFromCoords(200, 110);
+    updateAimLineFromCoords(
+        200,
+        110
+    );
 
     determineNextTurnByRules();
 
@@ -845,7 +1045,9 @@ function createScoreList(
 ) {
 
     const container =
-        document.getElementById(containerId);
+        document.getElementById(
+            containerId
+        );
 
     container.innerHTML = '';
 
@@ -856,9 +1058,11 @@ function createScoreList(
 
         item.className =
             'score-item' +
-            (i === currentScore
-                ? ' active'
-                : '');
+            (
+                i === currentScore
+                    ? ' active'
+                    : ''
+            );
 
         item.innerText = i;
 
@@ -912,7 +1116,9 @@ function determineNextTurnByRules() {
         );
 
         return;
+
     }
+
 
     if (
         ballsLeftBlue <= 0 &&
@@ -936,7 +1142,9 @@ function determineNextTurnByRules() {
         );
 
         return;
+
     }
+
 
     if (ballsLeftBlue <= 0) {
 
@@ -947,7 +1155,9 @@ function determineNextTurnByRules() {
         currentTurn = 'blue';
 
     } else if (
-        playedBalls.filter(b => !b.out).length === 0
+        playedBalls.filter(
+            b => !b.out
+        ).length === 0
     ) {
 
         currentTurn = lastRoundWinner;
@@ -965,6 +1175,7 @@ function determineNextTurnByRules() {
     }
 
     updateStatus();
+
 
     if (currentTurn === 'red') {
 
@@ -999,6 +1210,7 @@ function handleTargetOutRule() {
 
     let redHasBalls =
         ballsLeftRed > 0;
+
 
     if (
         blueHasBalls &&
@@ -1049,6 +1261,7 @@ function handleTargetOutRule() {
         let earnedPoints =
             remainingBalls;
 
+
         if (scoringTeam === 'blue') {
 
             scoreBlue += earnedPoints;
@@ -1062,7 +1275,7 @@ function handleTargetOutRule() {
                 'statusBar'
             ).innerText =
                 `Schweinchen im Aus!
-                 Du erhältst ${earnedPoints} Punkt(e).`;
+                Du erhältst ${earnedPoints} Punkt(e).`;
 
         } else {
 
@@ -1077,10 +1290,12 @@ function handleTargetOutRule() {
                 'statusBar'
             ).innerText =
                 `Schweinchen im Aus!
-                 KI erhält ${earnedPoints} Punkt(e).`;
+                KI erhält ${earnedPoints} Punkt(e).`;
+
         }
 
         updateCounters();
+
 
         setTimeout(
             () => {
@@ -1101,7 +1316,9 @@ function handleTargetOutRule() {
             },
             2500
         );
+
     }
+
 }
 
 
@@ -1128,9 +1345,13 @@ function getClosestTeamToTarget() {
 
     let minDistance =
         Math.hypot(
-            closest.x - targetBallObj.x,
-            closest.y - targetBallObj.y
+            closest.x -
+                targetBallObj.x,
+
+            closest.y -
+                targetBallObj.y
         );
+
 
     for (
         let i = 1;
@@ -1157,6 +1378,7 @@ function getClosestTeamToTarget() {
     }
 
     return closest.team;
+
 }
 
 
@@ -1168,13 +1390,17 @@ function getDistanceFromTargetInCm(ball) {
 
     let pixelDist =
         Math.hypot(
-            ball.x - targetBallObj.x,
-            ball.y - targetBallObj.y
+            ball.x -
+                targetBallObj.x,
+
+            ball.y -
+                targetBallObj.y
         );
 
     return Math.round(
         pixelDist * 2.2
     );
+
 }
 
 
@@ -1199,6 +1425,7 @@ function updateStatus(
                     : 'Noch keine Kugel'
             );
 
+
     if (lastThrownBall) {
 
         if (lastThrownBall.out) {
@@ -1207,7 +1434,7 @@ function updateStatus(
                 'statusBar'
             ).innerText =
                 `Wurf im AUS!
-                 Kugel hat das Spielfeld verlassen.`;
+                Kugel hat das Spielfeld verlassen.`;
 
         } else {
 
@@ -1225,7 +1452,8 @@ function updateStatus(
                 'statusBar'
             ).innerText =
                 `${teamLabel}: ${cm} cm von der Sau!
-                 (${leadingText})`;
+                (${leadingText})`;
+
         }
 
     } else {
@@ -1236,8 +1464,8 @@ function updateStatus(
                 'statusBar'
             ).innerText =
                 `Du bist am Zug
-                 (${leadingText}) |
-                 Ziel anvisieren & Kraft wählen`;
+                (${leadingText}) |
+                Ziel anvisieren & Kraft wählen`;
 
         } else {
 
@@ -1245,8 +1473,8 @@ function updateStatus(
                 'statusBar'
             ).innerText =
                 `KI ist am Zug
-                 (${leadingText}) |
-                 Taktischer Spielzug...`;
+                (${leadingText}) |
+                Taktischer Spielzug...`;
 
         }
 
@@ -1275,10 +1503,12 @@ terrain.addEventListener(
             terrain.getBoundingClientRect();
 
         let clickX =
-            e.clientX - rect.left;
+            e.clientX -
+            rect.left;
 
         let clickY =
-            e.clientY - rect.top;
+            e.clientY -
+            rect.top;
 
         aimX = clickX;
         aimY = clickY;
@@ -1305,13 +1535,18 @@ function updateAimLineFromCoords(
     const startY = 195;
 
     let dx =
-        targetX - startX;
+        targetX -
+        startX;
 
     let dy =
-        targetY - startY;
+        targetY -
+        startY;
 
     let dist =
-        Math.hypot(dx, dy) || 1;
+        Math.hypot(
+            dx,
+            dy
+        ) || 1;
 
     let fixedLength = 80;
 
@@ -1343,6 +1578,7 @@ function updateAimLineFromCoords(
         (dy / dist) *
         fixedLength
     );
+
 }
 
 
@@ -1366,6 +1602,7 @@ function executePlayerThrow() {
         'btnWurf'
     ).disabled = true;
 
+
     let powerVal =
         parseInt(
             document.getElementById(
@@ -1373,43 +1610,58 @@ function executePlayerThrow() {
             ).value
         );
 
+
     const startX = 200;
     const startY = 195;
 
+
     let dx =
-        aimX - startX;
+        aimX -
+        startX;
 
     let dy =
-        aimY - startY;
+        aimY -
+        startY;
 
     let dist =
-        Math.hypot(dx, dy) || 1;
+        Math.hypot(
+            dx,
+            dy
+        ) || 1;
+
 
     let powerFactor =
         powerVal / 78;
 
     let maxReach =
-        150 * powerFactor;
+        150 *
+        powerFactor;
+
 
     let impactX =
         startX +
         (dx / dist) *
         Math.min(
-            dist * powerFactor,
+            dist *
+                powerFactor,
             maxReach
         );
+
 
     let impactY =
         startY +
         (dy / dist) *
         Math.min(
-            dist * powerFactor,
+            dist *
+                powerFactor,
             maxReach
         );
+
 
     ballsLeftBlue--;
 
     updateRestDisplay();
+
 
     startArcThrowSimulation(
         'blue',
@@ -1419,12 +1671,13 @@ function executePlayerThrow() {
         impactY,
         powerVal
     );
+
 }
 
 
 /* =====================================================
    TAKTISCHE KI
-   ===================================================== */
+===================================================== */
 
 function getActiveTeamBalls(team) {
 
@@ -1440,8 +1693,11 @@ function getActiveTeamBalls(team) {
 function getBallDistanceToTarget(ball) {
 
     return Math.hypot(
-        ball.x - targetBallObj.x,
-        ball.y - targetBallObj.y
+        ball.x -
+            targetBallObj.x,
+
+        ball.y -
+            targetBallObj.y
     );
 
 }
@@ -1458,18 +1714,22 @@ function getBestTeamBall(team) {
     let best =
         balls[0];
 
+
     for (let b of balls) {
 
         if (
             getBallDistanceToTarget(b) <
             getBallDistanceToTarget(best)
         ) {
+
             best = b;
+
         }
 
     }
 
     return best;
+
 }
 
 
@@ -1499,8 +1759,10 @@ function computerThrow() {
 
     isProcessing = true;
 
+
     const startX = 200;
     const startY = 195;
+
 
     let redBalls =
         getActiveTeamBalls('red');
@@ -1514,31 +1776,14 @@ function computerThrow() {
     let bestBlue =
         getBestTeamBall('blue');
 
+
     let targetX;
     let targetY;
     let powerVal;
 
-    /*
-       GRUNDIDEE:
-
-       1. Die KI will zuerst selbst möglichst
-          nah an die Sau legen.
-
-       2. Eine gegnerische Kugel wird nur
-          geschossen, wenn sie einen deutlichen
-          taktischen Vorteil für Blau darstellt.
-
-       3. Wenn die KI bereits vorne liegt,
-          versucht sie eher zu legen als zu riskieren.
-
-       4. Wenn die KI deutlich hinten liegt,
-          wird ein Schuss wahrscheinlicher.
-
-       5. Das Schweinchen wird nicht absichtlich
-          angegriffen.
-    */
 
     let shouldShoot = false;
+
 
     if (
         bestBlue &&
@@ -1555,6 +1800,7 @@ function computerThrow() {
                 bestRed
             );
 
+
         let blueCloserCount =
             countBallsCloserThan(
                 'blue',
@@ -1567,11 +1813,6 @@ function computerThrow() {
                 blueDist
             );
 
-        /*
-           LEICHT:
-           Schuss nur bei wirklich großer
-           Bedrohung.
-        */
 
         if (difficulty === 'leicht') {
 
@@ -1580,19 +1821,12 @@ function computerThrow() {
                 blueDist + 10 < redDist &&
                 redCloserCount === 0
             ) {
+
                 shouldShoot = true;
+
             }
 
-        }
-
-        /*
-           MITTEL:
-           Schuss, wenn Blau deutlich besser
-           liegt oder mehrere blaue Kugeln
-           gefährlich nah liegen.
-        */
-
-        else if (difficulty === 'mittel') {
+        } else if (difficulty === 'mittel') {
 
             if (
                 (
@@ -1605,18 +1839,12 @@ function computerThrow() {
                     blueDist < 28
                 )
             ) {
+
                 shouldShoot = true;
+
             }
 
-        }
-
-        /*
-           SCHWER:
-           Die KI erkennt mehr taktische
-           Schusssituationen.
-        */
-
-        else {
+        } else {
 
             if (
                 (
@@ -1629,17 +1857,15 @@ function computerThrow() {
                     blueDist < 32
                 )
             ) {
+
                 shouldShoot = true;
+
             }
 
         }
 
     }
 
-    /*
-       Wenn die KI noch keine Kugel liegen hat,
-       wird normalerweise gelegt und nicht geschossen.
-    */
 
     if (!bestRed && bestBlue) {
 
@@ -1647,9 +1873,13 @@ function computerThrow() {
             difficulty === 'schwer' &&
             getBallDistanceToTarget(bestBlue) < 22
         ) {
+
             shouldShoot = true;
+
         } else {
+
             shouldShoot = false;
+
         }
 
     }
@@ -1666,23 +1896,33 @@ function computerThrow() {
 
         let scatter;
 
+
         if (difficulty === 'schwer') {
+
             scatter = 6;
+
         } else if (difficulty === 'mittel') {
+
             scatter = 14;
+
         } else {
+
             scatter = 24;
+
         }
+
 
         targetX =
             bestBlue.x +
             (Math.random() - 0.5) *
             scatter;
 
+
         targetY =
             bestBlue.y +
             (Math.random() - 0.5) *
             scatter;
+
 
         powerVal =
             difficulty === 'schwer'
@@ -1704,6 +1944,7 @@ function computerThrow() {
 
         let scatter;
 
+
         if (difficulty === 'leicht') {
 
             scatter = 24;
@@ -1718,18 +1959,15 @@ function computerThrow() {
 
         }
 
-        /*
-           Die KI legt nicht immer exakt auf
-           denselben Punkt. Dadurch wirkt das
-           Spiel natürlicher.
-        */
 
         let angle =
             Math.random() *
             Math.PI *
             2;
 
+
         let offsetDist;
+
 
         if (difficulty === 'leicht') {
 
@@ -1751,12 +1989,14 @@ function computerThrow() {
 
         }
 
+
         targetX =
             targetBallObj.x +
             Math.cos(angle) *
             offsetDist +
             (Math.random() - 0.5) *
             scatter;
+
 
         targetY =
             targetBallObj.y +
@@ -1765,9 +2005,6 @@ function computerThrow() {
             (Math.random() - 0.5) *
             scatter;
 
-        /*
-           Leger-Kraft.
-        */
 
         if (difficulty === 'leicht') {
 
@@ -1786,11 +2023,6 @@ function computerThrow() {
     }
 
 
-    /*
-       Sicherheitsbegrenzung innerhalb
-       des verkürzten Spielfeldes.
-    */
-
     targetX =
         Math.max(
             10,
@@ -1799,6 +2031,7 @@ function computerThrow() {
                 targetX
             )
         );
+
 
     targetY =
         Math.max(
@@ -1814,6 +2047,7 @@ function computerThrow() {
 
     updateRestDisplay();
 
+
     startArcThrowSimulation(
         'red',
         startX,
@@ -1822,6 +2056,7 @@ function computerThrow() {
         targetY,
         powerVal
     );
+
 }
 
 
@@ -1853,6 +2088,7 @@ function startArcThrowSimulation(
 ) {
 
     let ballObj = {
+
         x: startX,
         y: startY,
         vx: 0,
@@ -1860,9 +2096,12 @@ function startArcThrowSimulation(
         team: team,
         radius: 9,
         out: false
+
     };
 
+
     playedBalls.push(ballObj);
+
 
     let totalFrames = 30;
 
@@ -1873,19 +2112,23 @@ function startArcThrowSimulation(
 
         frame++;
 
+
         let t =
             frame /
             totalFrames;
+
 
         ballObj.x =
             startX +
             (impactX - startX) *
             t;
 
+
         ballObj.y =
             startY +
             (impactY - startY) *
             t;
+
 
         let scale =
             1 +
@@ -1894,25 +2137,30 @@ function startArcThrowSimulation(
             ) *
             0.6;
 
+
         redrawBalls();
+
 
         let container =
             document.getElementById(
                 'ballsContainer'
             );
 
+
         let el =
             container.lastElementChild;
+
 
         if (el) {
 
             el.style.transform =
                 `translate(-50%, -50%)
-                 scale(${scale})`;
+                scale(${scale})`;
 
             el.style.zIndex = '20';
 
         }
+
 
         if (
             frame <
@@ -1930,11 +2178,15 @@ function startArcThrowSimulation(
                 impactY
             );
 
+
             let rollDx =
-                impactX - startX;
+                impactX -
+                startX;
 
             let rollDy =
-                impactY - startY;
+                impactY -
+                startY;
+
 
             let rollDist =
                 Math.hypot(
@@ -1942,24 +2194,30 @@ function startArcThrowSimulation(
                     rollDy
                 ) || 1;
 
+
             let initialRollSpeed =
                 powerVal / 25;
+
 
             ballObj.vx =
                 (rollDx / rollDist) *
                 initialRollSpeed;
 
+
             ballObj.vy =
                 (rollDy / rollDist) *
                 initialRollSpeed;
+
 
             playMetalClankSound(
                 powerVal > 95
             );
 
+
             requestAnimationFrame(
                 groundRollStep
             );
+
         }
 
     }
@@ -1968,10 +2226,13 @@ function startArcThrowSimulation(
     function groundRollStep() {
 
         let allObjects = [
+
             ...playedBalls.filter(
                 b => !b.out
             )
+
         ];
+
 
         if (!targetBallObj.out) {
 
@@ -1991,10 +2252,6 @@ function startArcThrowSimulation(
                 obj.vx *= 0.955;
                 obj.vy *= 0.955;
 
-                /*
-                   AUS-Grenzen an das verkürzte
-                   Spielfeld angepasst.
-                */
 
                 if (
                     obj.x < -10 ||
@@ -2035,6 +2292,7 @@ function startArcThrowSimulation(
                 let b2 =
                     allObjects[j];
 
+
                 if (
                     b1.out ||
                     b2.out
@@ -2042,17 +2300,22 @@ function startArcThrowSimulation(
                     continue;
                 }
 
+
                 let distX =
-                    b2.x - b1.x;
+                    b2.x -
+                    b1.x;
 
                 let distY =
-                    b2.y - b1.y;
+                    b2.y -
+                    b1.y;
+
 
                 let distance =
                     Math.hypot(
                         distX,
                         distY
                     );
+
 
                 let minDist =
                     b1.radius +
@@ -2068,6 +2331,7 @@ function startArcThrowSimulation(
                         minDist -
                         distance;
 
+
                     let nx =
                         distX /
                         (distance || 1);
@@ -2075,6 +2339,7 @@ function startArcThrowSimulation(
                     let ny =
                         distY /
                         (distance || 1);
+
 
                     b1.x -=
                         nx *
@@ -2085,6 +2350,7 @@ function startArcThrowSimulation(
                         ny *
                         overlap *
                         0.5;
+
 
                     b2.x +=
                         nx *
@@ -2105,6 +2371,7 @@ function startArcThrowSimulation(
                         b1.vy -
                         b2.vy;
 
+
                     let p =
                         2 *
                         (
@@ -2124,6 +2391,7 @@ function startArcThrowSimulation(
                         ny *
                         0.8;
 
+
                     b2.vx +=
                         p *
                         nx *
@@ -2133,6 +2401,7 @@ function startArcThrowSimulation(
                         p *
                         ny *
                         0.8;
+
 
                     hitOccurred = true;
 
@@ -2161,6 +2430,7 @@ function startArcThrowSimulation(
             allObjects.filter(
                 o => !o.out
             );
+
 
         let maxSpeed =
             activeObjects.length > 0
@@ -2195,10 +2465,12 @@ function startArcThrowSimulation(
                 }
             );
 
+
             updateStatus(
                 ballObj,
                 team
             );
+
 
             setTimeout(
                 () => {
@@ -2237,18 +2509,23 @@ function showDonneeMarker(
             'div'
         );
 
+
     donneeEl.className =
         'donnee-marker';
+
 
     donneeEl.style.left =
         x + 'px';
 
+
     donneeEl.style.top =
         y + 'px';
+
 
     terrain.appendChild(
         donneeEl
     );
+
 
     setTimeout(
         () => {
@@ -2283,7 +2560,9 @@ function redrawBalls() {
             'ballsContainer'
         );
 
+
     container.innerHTML = '';
+
 
     playedBalls.forEach(
         b => {
@@ -2295,6 +2574,7 @@ function redrawBalls() {
                         'div'
                     );
 
+
                 el.className =
                     `ball ${
                         b.team === 'blue'
@@ -2302,11 +2582,14 @@ function redrawBalls() {
                             : 'red-ball'
                     }`;
 
+
                 el.style.left =
                     b.x + 'px';
 
+
                 el.style.top =
                     b.y + 'px';
+
 
                 container.appendChild(
                     el
@@ -2339,6 +2622,7 @@ function endRundeAutomatically() {
                 ? 'red'
                 : 'blue';
 
+
         let bestOpponentDist =
             9999;
 
@@ -2359,6 +2643,7 @@ function endRundeAutomatically() {
                             b.y -
                                 targetBallObj.y
                         );
+
 
                     if (
                         d <
@@ -2393,6 +2678,7 @@ function endRundeAutomatically() {
                                 targetBallObj.y
                         );
 
+
                     if (
                         d <
                         bestOpponentDist
@@ -2411,7 +2697,9 @@ function endRundeAutomatically() {
         if (
             earnedPoints === 0
         ) {
+
             earnedPoints = 1;
+
         }
 
 
@@ -2422,42 +2710,52 @@ function endRundeAutomatically() {
             scoreBlue +=
                 earnedPoints;
 
+
             if (
                 scoreBlue > 13
             ) {
+
                 scoreBlue = 13;
+
             }
+
 
             lastRoundWinner =
                 'blue';
+
 
             document.getElementById(
                 'statusBar'
             ).innerText =
                 `Aufnahme beendet:
-                 Du gewinnst
-                 ${earnedPoints} Punkt(e)!`;
+                Du gewinnst
+                ${earnedPoints} Punkt(e)!`;
 
         } else {
 
             scoreRed +=
                 earnedPoints;
 
+
             if (
                 scoreRed > 13
             ) {
+
                 scoreRed = 13;
+
             }
+
 
             lastRoundWinner =
                 'red';
+
 
             document.getElementById(
                 'statusBar'
             ).innerText =
                 `Aufnahme beendet:
-                 KI gewinnt
-                 ${earnedPoints} Punkt(e)!`;
+                KI gewinnt
+                ${earnedPoints} Punkt(e)!`;
 
         }
 
@@ -2501,10 +2799,12 @@ function handleMatchEnd() {
             'endScreenOverlay'
         );
 
+
     let titleEl =
         document.getElementById(
             'endScreenTitle'
         );
+
 
     let textEl =
         document.getElementById(
@@ -2519,19 +2819,18 @@ function handleMatchEnd() {
         titleEl.innerText =
             "Turniersieg!";
 
+
         textEl.innerText =
-            "Herzlichen Glückwunsch!
-             Du hast das Turnier gewonnen.
-             Möchtest du noch eine Runde spielen?";
+            "Herzlichen Glückwunsch! Du hast das Turnier gewonnen. Möchtest du noch eine Runde spielen?";
 
     } else {
 
         titleEl.innerText =
             "Spiel beendet";
 
+
         textEl.innerText =
-            "Die KI hat das Match gewonnen.
-             Möchtest du eine Revanche spielen?";
+            "Die KI hat das Match gewonnen. Möchtest du eine Revanche spielen?";
 
     }
 
@@ -2553,6 +2852,7 @@ function startNewGameFromOverlay() {
     ).style.display =
         'none';
 
+
     scoreBlue = 0;
     scoreRed = 0;
 
@@ -2560,6 +2860,7 @@ function startNewGameFromOverlay() {
 
     lastRoundWinner =
         'blue';
+
 
     randomizeTargetPosition();
 
@@ -2579,6 +2880,7 @@ function goToMainStartScreen() {
     ).style.display =
         'none';
 
+
     scoreBlue = 0;
     scoreRed = 0;
 
@@ -2587,10 +2889,12 @@ function goToMainStartScreen() {
     lastRoundWinner =
         'blue';
 
+
     document.getElementById(
         'gameApp'
     ).style.display =
         'none';
+
 
     document.getElementById(
         'startScreen'
