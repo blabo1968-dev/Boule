@@ -134,7 +134,6 @@
             box-sizing: border-box;
         }
 
-        /* Layout für Spielfeld und Score-Leisten links/rechts */
         .game-main-layout {
             display: flex;
             flex-direction: row;
@@ -265,16 +264,16 @@
         }
         #impactFlash {
             position: absolute;
-            width: 18px;
-            height: 18px;
-            background-color: #ef4135;
-            border: 2px solid #ffffff;
+            width: 8px;
+            height: 8px;
+            background-color: #b0b8c0;
+            border: 1px solid #ffffff;
             border-radius: 50%;
             transform: translate(-50%, -50%);
             pointer-events: none;
             z-index: 25;
             display: none;
-            box-shadow: 0 0 10px #ef4135;
+            box-shadow: 0 0 5px rgba(0,0,0,0.5);
         }
         .control-panel {
             display: flex;
@@ -359,13 +358,11 @@
         </div>
 
         <div class="game-main-layout">
-            <!-- Linke Score-Tabelle (Blau) -->
             <div class="side-panel blue-panel">
                 <div class="counter-title">Du (Blau)<br>[Rest: <span id="restBlue">3</span>]</div>
                 <div class="score-list" id="counter-blue"></div>
             </div>
 
-            <!-- Spielfeld in der Mitte -->
             <div id="terrain">
                 <div class="circle-abwurf" id="abwurfKreis"></div>
                 <div id="aimMarker"></div>
@@ -374,7 +371,6 @@
                 <div id="ballsContainer"></div>
             </div>
 
-            <!-- Rechte Score-Tabelle (Rot) -->
             <div class="side-panel red-panel">
                 <div class="counter-title" id="kiTitle">KI (Rot)<br>[Rest: <span id="restRed">3</span>]</div>
                 <div class="score-list" id="counter-red"></div>
@@ -543,16 +539,30 @@
                 return;
             }
 
-            if (ballsLeftBlue <= 0) {
-                currentTurn = 'red';
-            } else if (ballsLeftRed <= 0) {
-                currentTurn = 'blue';
-            } else if (playedBalls.filter(b => !b.out).length === 0) {
+            let activeBalls = playedBalls.filter(b => !b.out);
+            if (activeBalls.length === 0) {
                 currentTurn = lastRoundWinner;
             } else {
                 let closestTeam = getClosestTeamToTarget();
-                currentTurn = (closestTeam === 'blue') ? 'red' : 'blue';
+                if (!closestTeam) {
+                    currentTurn = lastRoundWinner;
+                } else {
+                    let opponentTeam = closestTeam === 'blue' ? 'red' : 'blue';
+                    let opponentHasBalls = opponentTeam === 'blue' ? (ballsLeftBlue > 0) : (ballsLeftRed > 0);
+                    let myTeamHasBalls = closestTeam === 'blue' ? (ballsLeftBlue > 0) : (ballsLeftRed > 0);
+
+                    if (opponentHasBalls && !myTeamHasBalls) {
+                        currentTurn = opponentTeam;
+                    } else if (!opponentHasBalls && myTeamHasBalls) {
+                        currentTurn = closestTeam;
+                    } else {
+                        currentTurn = opponentTeam;
+                    }
+                }
             }
+
+            if (currentTurn === 'blue' && ballsLeftBlue <= 0 && ballsLeftRed > 0) currentTurn = 'red';
+            if (currentTurn === 'red' && ballsLeftRed <= 0 && ballsLeftBlue > 0) currentTurn = 'blue';
 
             updateStatus();
 
@@ -779,6 +789,7 @@
                 if (frame < totalFrames) {
                     requestAnimationFrame(arcStep);
                 } else {
+                    // Diskreter grauer Punkt beim Aufschlag (Donnée) für knapp 1 Sekunde
                     const impactFlash = document.getElementById('impactFlash');
                     impactFlash.style.left = impactX + 'px';
                     impactFlash.style.top = impactY + 'px';
@@ -786,7 +797,7 @@
 
                     setTimeout(() => {
                         impactFlash.style.display = 'none';
-                    }, 1000);
+                    }, 800);
 
                     let rollDx = impactX - startX;
                     let rollDy = impactY - startY;
@@ -837,19 +848,21 @@
                             let nx = distX / (distance || 1);
                             let ny = distY / (distance || 1);
 
+                            // Korrektur der Überlappung (Positionskorrektur)
                             b1.x -= nx * overlap * 0.5;
                             b1.y -= ny * overlap * 0.5;
                             b2.x += nx * overlap * 0.5;
                             b2.y += ny * overlap * 0.5;
 
+                            // Realistischer elastischer Stoß mit Impulsaustausch (Massenverhältnis berücksichtigt)
                             let kx = b1.vx - b2.vx;
                             let ky = b1.vy - b2.vy;
                             let p = 2 * (nx * kx + ny * ky) / 2;
 
-                            b1.vx -= p * nx * 0.8;
-                            b1.vy -= p * ny * 0.8;
-                            b2.vx += p * nx * 0.8;
-                            b2.vy += p * ny * 0.8;
+                            b1.vx -= p * nx * 0.9;
+                            b1.vy -= p * ny * 0.9;
+                            b2.vx += p * nx * 0.9;
+                            b2.vy += p * ny * 0.9;
 
                             hitOccurred = true;
                         }
@@ -939,12 +952,12 @@
 
             setTimeout(() => {
                 if (scoreBlue >= 13 || scoreRed >= 13) {
-                    document.getElementById('statusBar').innerText = scoreBlue >= 13 ? "Glückwunsch! Du hast das Match gewonnen!" : "Die KI hat das Match gewonnen!";
+                    document.getElementById('statusBar').innerText = scoreBlue >= 13 ? "Glückwunsch! Du hast das Match gewonnen!" : "Die KI has das Match gewonnen!";
                     setTimeout(resetMatch, 3500);
                 } else {
                     resetRundeData();
                 }
-            }, 2500);
+            }, 3000);
         }
 
         function resetRundeData() {
