@@ -429,7 +429,34 @@
             width: 100%;
             max-width: 250px;
         }
-    </style>
+    
+/* Mobile-/Touch-Unterstützung – bestehendes Spielprinzip bleibt unverändert */
+html, body {
+    touch-action: manipulation;
+    overscroll-behavior: none;
+}
+#aimDonnee {
+    touch-action: none;
+}
+button, input, #aimDonnee {
+    -webkit-user-select: none;
+    user-select: none;
+}
+@media (max-width: 600px) {
+    body {
+        padding: 4px;
+    }
+    #terrain {
+        width: 100%;
+        max-width: 100vw;
+        overflow: hidden;
+    }
+    button, input[type="range"] {
+        min-height: 40px;
+    }
+}
+
+</style>
 </head>
 
 <body>
@@ -840,24 +867,105 @@
             isProcessing = true;
             document.getElementById('btnWurf').disabled = true;
 
-            let powerVal = parseInt(powerRangeInput.value);
+            const powerVal = parseInt(powerRangeInput.value, 10);
             ballsLeftBlue--;
             updateRestDisplay();
 
-            let startX = getThrowStartX();
-            let startY = getThrowStartY();
-            let dx = aimX - startX;
-            let dy = aimY - startY;
-            let dist = Math.hypot(dx, dy);
+            const startX = getThrowStartX();
+            const startY = getThrowStartY();
+            const dx = aimX - startX;
+            const dy = aimY - startY;
+            const dist = Math.max(1, Math.hypot(dx, dy));
 
-            let factor = (powerVal / 78) * (dist / 100);
-            let targetFinalX = startX + dx * factor;
-            let targetFinalY = startY + dy * factor;
+            // Der Pfeil bestimmt die Richtung, die Kraft bestimmt die Reichweite.
+            const dirX = dx / dist;
+            const dirY = dy / dist;
+            const speed = 0.65 + (powerVal / 112) * 2.65;
 
-            animateThrow('blue', startX, startY, targetFinalX, targetFinalY, () => {
+            animateThrow('blue', startX, startY, aimX, aimY, dirX, dirY, speed, () => {
                 isProcessing = false;
                 determineNextTurnByRules();
             });
+        }
+
+        function getAITacticalPlan(startX, startY) {
+            const active = playedBalls.filter(b => !b.out);
+            const opponent = active.filter(b => b.team === 'blue');
+            const own = active.filter(b => b.team === 'red');
+
+            const blueClosest = getClosestBallForTeam('blue');
+            const redClosest = getClosestBallForTeam('red');
+            const blueDistance = blueClosest ? distanceBetween(blueClosest, targetBallObj) : Infinity;
+            const redDistance = redClosest ? distanceBetween(redClosest, targetBallObj) : Infinity;
+
+            let tactic = 'legen';
+            let target = null;
+
+            // Wenn Blau vorne liegt, hat ein Schuss auf die beste blaue Kugel Vorrang.
+            if (blueClosest && blueDistance < redDistance) {
+                const shootChance = difficulty === 'schwer' ? 0.82 : difficulty === 'mittel' ? 0.62 : 0.40;
+                if (Math.random() < shootChance) {
+                    tactic = 'schiessen';
+                    target = blueClosest;
+                }
+            }
+
+            // Wenn keine gegnerische Kugel gefährlich liegt, wird gelegt.
+            if (tactic === 'legen') {
+                const angle = Math.random() * Math.PI * 2;
+                const radius = difficulty === 'schwer' ? 12 + Math.random() * 12 :
+                               difficulty === 'mittel' ? 14 + Math.random() * 20 :
+                               18 + Math.random() * 28;
+                target = {
+                    x: targetBallObj.x + Math.cos(angle) * radius,
+                    y: targetBallObj.y + Math.sin(angle) * radius
+                };
+            }
+
+            // Seltene taktische Variante: Schweinchen leicht verschieben,
+            // aber nicht mehr als Standardziel jedes Wurfs.
+            if (difficulty !== 'leicht' && Math.random() < 0.12 && opponent.length === 0) {
+                tactic = 'jack';
+                target = {
+                    x: targetBallObj.x + (Math.random() - 0.5) * 18,
+                    y: targetBallObj.y + (Math.random() - 0.5) * 18
+                };
+            }
+
+            let tx = target.x;
+            let ty = target.y;
+            let aimError = difficulty === 'schwer' ? 2.5 : difficulty === 'mittel' ? 6 : 11;
+
+            if (tactic === 'schiessen' && target) {
+                // Beim Schießen wird die gegnerische Kugel selbst zum Ziel.
+                tx = target.x;
+                ty = target.y;
+                aimError *= 0.65;
+            }
+
+            tx += (Math.random() - 0.5) * aimError * 2;
+            ty += (Math.random() - 0.5) * aimError * 2;
+
+            let dx = tx - startX;
+            let dy = ty - startY;
+            let dist = Math.max(1, Math.hypot(dx, dy));
+            let dirX = dx / dist;
+            let dirY = dy / dist;
+
+            // Je nach taktischem Ziel unterschiedliche Wurfstärke.
+            let speed;
+            if (tactic === 'schiessen') {
+                speed = difficulty === 'schwer' ? 3.05 : difficulty === 'mittel' ? 2.85 : 2.55;
+            } else if (tactic === 'jack') {
+                speed = difficulty === 'schwer' ? 2.25 : 2.05;
+            } else {
+                // Legen: Zielentfernung beeinflusst die Kraft, damit nicht jeder
+                // Wurf mit maximaler Geschwindigkeit erfolgt.
+                const desired = Math.min(1, dist / 260);
+                speed = 0.75 + desired * 2.15;
+            }
+
+            return { dirX, dirY, speed, tactic, targetX: tx, targetY: ty };
         }
 
         function computerThrow() {
@@ -867,162 +975,248 @@
             ballsLeftRed--;
             updateRestDisplay();
 
-            let startX = getThrowStartX();
-            let startY = getThrowStartY();
+            const startX = getThrowStartX();
+            const startY = getThrowStartY();
+            const plan = getAITacticalPlan(startX, startY);
 
-            let targetX = targetBallObj.x + (Math.random() * 40 - 20);
-            let targetY = targetBallObj.y + (Math.random() * 40 - 20);
+            const tacticText = plan.tactic === 'schiessen' ? 'KI: SCHIESSEN' :
+                               plan.tactic === 'jack' ? 'KI: SCHWEINCHEN' : 'KI: LEGEN';
+            document.getElementById('statusBar').innerText = tacticText;
 
-            if (difficulty === 'schwer' && Math.random() < 0.6) {
-                targetX = targetBallObj.x + (Math.random() * 10 - 5);
-                targetY = targetBallObj.y + (Math.random() * 10 - 5);
-            } else if (difficulty === 'leicht') {
-                targetX += (Math.random() * 30 - 15);
-                targetY += (Math.random() * 30 - 15);
-            }
-
-            animateThrow('red', startX, startY, targetX, targetY, () => {
+            animateThrow('red', startX, startY, plan.targetX, plan.targetY, plan.dirX, plan.dirY, plan.speed, () => {
                 isProcessing = false;
                 determineNextTurnByRules();
             });
         }
 
-        function animateThrow(team, startX, startY, finalX, finalY, callback) {
-            let ballEl = document.createElement('div');
+        function distanceBetween(a, b) {
+            return Math.hypot(a.x - b.x, a.y - b.y);
+        }
+
+        function getClosestBallForTeam(team) {
+            let closest = null;
+            let min = Infinity;
+            playedBalls.forEach(b => {
+                if (!b.out && b.team === team) {
+                    const d = distanceBetween(b, targetBallObj);
+                    if (d < min) {
+                        min = d;
+                        closest = b;
+                    }
+                }
+            });
+            return closest;
+        }
+
+        function animateThrow(team, startX, startY, landX, landY, dirX, dirY, speed, callback) {
+            const ballEl = document.createElement('div');
             ballEl.className = `ball ${team === 'blue' ? 'blue-ball' : 'red-ball'}`;
             ballEl.style.left = startX + 'px';
             ballEl.style.top = startY + 'px';
             document.getElementById('ballsContainer').appendChild(ballEl);
 
-            let startTime = performance.now();
-            let duration = 650;
+            // Die Kugel fliegt vom exakten Wurfpunkt bis zum gelben Donnée-/Zielkreis.
+            // Sie darf NICHT vorher auf dem Boden landen. Erst am Zielpunkt beginnt
+            // die Rollphysik.
+            const flightDuration = 420 + Math.min(220, Math.hypot(landX - startX, landY - startY) * 0.45);
+            const startTime = performance.now();
 
-            function step(currentTime) {
-                let elapsed = currentTime - startTime;
-                let progress = Math.min(elapsed / duration, 1);
-                let easeProgress = 1 - Math.pow(1 - progress, 2);
+            function flightStep(now) {
+                const progress = Math.min(1, (now - startTime) / flightDuration);
+                const eased = 1 - Math.pow(1 - progress, 2);
+                const x = startX + (landX - startX) * eased;
+                const y = startY + (landY - startY) * eased;
+                const arc = Math.sin(progress * Math.PI) * (8 + speed * 3);
 
-                let currentX = startX + (finalX - startX) * easeProgress;
-                let currentY = startY + (finalY - startY) * easeProgress;
-
-                ballEl.style.left = currentX + 'px';
-                ballEl.style.top = currentY + 'px';
+                ballEl.style.left = x + 'px';
+                ballEl.style.top = (y - arc) + 'px';
 
                 if (progress < 1) {
-                    requestAnimationFrame(step);
-                } else {
-                    let newBall = {
-                        x: finalX,
-                        y: finalY,
-                        vx: (finalX - startX) * 0.08,
-                        vy: (finalY - startY) * 0.08,
-                        team: team,
-                        element: ballEl,
-                        out: (finalX < 10 || finalX > terrain.clientWidth - 10 || finalY < 10 || finalY > terrain.clientHeight - 10)
-                    };
-
-                    if (newBall.out) {
-                        ballEl.remove();
-                    } else {
-                        playedBalls.push(newBall);
-                        resolvePhysicsAndCollisions(newBall, callback);
-                        return;
-                    }
-                    callback();
+                    requestAnimationFrame(flightStep);
+                    return;
                 }
+
+                const newBall = {
+                    x: landX,
+                    y: landY,
+                    vx: dirX * speed,
+                    vy: dirY * speed,
+                    team: team,
+                    element: ballEl,
+                    out: false,
+                    radius: 9
+                };
+
+                ballEl.style.left = landX + 'px';
+                ballEl.style.top = landY + 'px';
+
+                if (isOutsideField(newBall)) {
+                    newBall.out = true;
+                    ballEl.remove();
+                    callback();
+                    return;
+                }
+
+                playedBalls.push(newBall);
+                resolvePhysicsAndCollisions(newBall, callback);
             }
-            requestAnimationFrame(step);
+
+            requestAnimationFrame(flightStep);
         }
 
-        // Physik-Schleife für Stoß und Weitergleiten von Kugel zu Kugel / Schweinchen
-        function resolvePhysicsAndCollisions(activeBall, callback) {
-            // Erst direkten Treffer mit Schweinchen prüfen
-            let targetDist = Math.hypot(activeBall.x - targetBallObj.x, activeBall.y - targetBallObj.y);
-            if (targetDist < 16 && !targetBallObj.out) {
-                playMetalClankSound(true);
-                let angle = Math.atan2(targetBallObj.y - activeBall.y, targetBallObj.x - activeBall.x);
-                targetBallObj.vx = Math.cos(angle) * Math.hypot(activeBall.vx, activeBall.vy) * 0.75;
-                targetBallObj.vy = Math.sin(angle) * Math.hypot(activeBall.vx, activeBall.vy) * 0.75;
+        function isOutsideField(obj) {
+            const margin = obj.radius || 9;
+            return obj.x < margin || obj.x > terrain.clientWidth - margin ||
+                   obj.y < margin || obj.y > terrain.clientHeight - margin;
+        }
+
+        function stopVelocity(obj) {
+            obj.vx = 0;
+            obj.vy = 0;
+        }
+
+        function applyFriction(obj, amount) {
+            const speed = Math.hypot(obj.vx || 0, obj.vy || 0);
+            if (speed <= amount) {
+                stopVelocity(obj);
+                return;
+            }
+            const factor = (speed - amount) / speed;
+            obj.vx *= factor;
+            obj.vy *= factor;
+        }
+
+        function collideObjects(a, b, restitution, soundHard) {
+            if (!a || !b || a.out || b.out) return false;
+
+            const ra = a.radius || 9;
+            const rb = b.radius || 9;
+            let dx = b.x - a.x;
+            let dy = b.y - a.y;
+            let d = Math.hypot(dx, dy);
+            const minDist = ra + rb;
+
+            if (d >= minDist) return false;
+
+            if (d < 0.001) {
+                dx = 1;
+                dy = 0;
+                d = 1;
             }
 
-            // Kollision mit bereits liegenden Kugeln prüfen
-            playedBalls.forEach(b => {
-                if (b !== activeBall && !b.out) {
-                    let d = Math.hypot(activeBall.x - b.x, activeBall.y - b.y);
-                    if (d < 18) {
-                        playMetalClankSound(false);
-                        let angle = Math.atan2(b.y - activeBall.y, b.x - activeBall.x);
-                        b.vx = Math.cos(angle) * Math.hypot(activeBall.vx, activeBall.vy) * 0.65;
-                        b.vy = Math.sin(angle) * Math.hypot(activeBall.vx, activeBall.vy) * 0.65;
-                    }
-                }
-            });
+            const nx = dx / d;
+            const ny = dy / d;
+            const overlap = minDist - d;
 
-            // Physik-Gleitphase starten
-            let glideSteps = 0;
-            function glideStep() {
-                glideSteps++;
+            // Erst trennen, damit Kugeln niemals ineinander stehen bleiben.
+            const totalRadius = ra + rb;
+            a.x -= nx * overlap * (rb / totalRadius);
+            a.y -= ny * overlap * (rb / totalRadius);
+            b.x += nx * overlap * (ra / totalRadius);
+            b.y += ny * overlap * (ra / totalRadius);
+
+            const avx = a.vx || 0;
+            const avy = a.vy || 0;
+            const bvx = b.vx || 0;
+            const bvy = b.vy || 0;
+            const relativeNormal = (bvx - avx) * nx + (bvy - avy) * ny;
+
+            // Nur reagieren, wenn die Körper aufeinander zulaufen.
+            if (relativeNormal < 0) {
+                const massA = a.team === 'target' ? 0.35 : 1;
+                const massB = b.team === 'target' ? 0.35 : 1;
+                const impulse = -(1 + restitution) * relativeNormal / (1 / massA + 1 / massB);
+
+                a.vx = avx - (impulse / massA) * nx;
+                a.vy = avy - (impulse / massA) * ny;
+                b.vx = bvx + (impulse / massB) * nx;
+                b.vy = bvy + (impulse / massB) * ny;
+
+                playMetalClankSound(soundHard || Math.abs(relativeNormal) > 1.8);
+            }
+            return true;
+        }
+
+        function updateBallDOM(ball) {
+            if (!ball.element) return;
+            ball.element.style.left = ball.x + 'px';
+            ball.element.style.top = ball.y + 'px';
+        }
+
+        // Kontinuierliche Physik mit mehreren kleinen Zeitschritten.
+        // Dadurch können schnelle Kugeln andere Kugeln nicht einfach durchdringen.
+        function resolvePhysicsAndCollisions(activeBall, callback) {
+            let frames = 0;
+            const maxFrames = 180;
+            let callbackDone = false;
+
+            function finish() {
+                if (callbackDone) return;
+                callbackDone = true;
+                callback();
+            }
+
+            function physicsStep() {
+                frames++;
                 let moving = false;
+                const objects = [targetBallObj].concat(playedBalls.filter(b => !b.out));
+                const subSteps = 4;
 
-                // Aktive Kugel gleitet aus
-                if (!activeBall.out) {
-                    activeBall.x += activeBall.vx;
-                    activeBall.y += activeBall.vy;
-                    activeBall.vx *= 0.85;
-                    activeBall.vy *= 0.85;
-                    activeBall.element.style.left = activeBall.x + 'px';
-                    activeBall.element.style.top = activeBall.y + 'px';
+                for (let s = 0; s < subSteps; s++) {
+                    objects.forEach(obj => {
+                        if (obj.out) return;
+                        obj.x += (obj.vx || 0) / subSteps;
+                        obj.y += (obj.vy || 0) / subSteps;
+                    });
 
-                    if (activeBall.x < 10 || activeBall.x > terrain.clientWidth - 10 || activeBall.y < 10 || activeBall.y > terrain.clientHeight - 10) {
-                        activeBall.out = true;
-                        activeBall.element.remove();
-                    } else if (Math.hypot(activeBall.vx, activeBall.vy) > 0.2) {
-                        moving = true;
-                    }
-                }
-
-                // Schweinchen gleitet aus, falls getroffen
-                if (!targetBallObj.out && (Math.abs(targetBallObj.vx) > 0.1 || Math.abs(targetBallObj.vy) > 0.1)) {
-                    targetBallObj.x += targetBallObj.vx;
-                    targetBallObj.y += targetBallObj.vy;
-                    targetBallObj.vx *= 0.82;
-                    targetBallObj.vy *= 0.82;
-                    updateTargetBallDOM();
-
-                    if (targetBallObj.x < 12 || targetBallObj.x > terrain.clientWidth - 12 || targetBallObj.y < 12 || targetBallObj.y > terrain.clientHeight - 12) {
-                        targetBallObj.out = true;
-                        updateTargetBallDOM();
-                    } else {
-                        moving = true;
-                    }
-                }
-
-                // Andere bereits liegende Kugeln bewegen sich durch Kettenreaktion mit
-                playedBalls.forEach(b => {
-                    if (!b.out && (Math.abs(b.vx || 0) > 0.1 || Math.abs(b.vy || 0) > 0.1)) {
-                        b.x += b.vx;
-                        b.y += b.vy;
-                        b.vx *= 0.82;
-                        b.vy *= 0.82;
-                        b.element.style.left = b.x + 'px';
-                        b.element.style.top = b.y + 'px';
-
-                        if (b.x < 10 || b.x > terrain.clientWidth - 10 || b.y < 10 || b.y > terrain.clientHeight - 10) {
-                            b.out = true;
-                            b.element.remove();
-                        } else {
-                            moving = true;
+                    // Alle relevanten Paare prüfen – auch Kettenreaktionen.
+                    for (let i = 0; i < objects.length; i++) {
+                        for (let j = i + 1; j < objects.length; j++) {
+                            const a = objects[i];
+                            const b = objects[j];
+                            if (a.out || b.out) continue;
+                            collideObjects(a, b, (a.team === 'target' || b.team === 'target') ? 0.72 : 0.58, false);
                         }
                     }
+
+                    objects.forEach(obj => {
+                        if (obj.out) return;
+                        if (obj === targetBallObj) {
+                            updateTargetBallDOM();
+                        } else {
+                            updateBallDOM(obj);
+                        }
+
+                        if (isOutsideField(obj)) {
+                            obj.out = true;
+                            if (obj.element) obj.element.remove();
+                            if (obj === targetBallObj) updateTargetBallDOM();
+                        }
+                    });
+                }
+
+                objects.forEach(obj => {
+                    if (obj.out) return;
+                    // Gleichmäßige Rollreibung statt Frame-zu-Frame-Sprünge.
+                    applyFriction(obj, obj === targetBallObj ? 0.045 : 0.055);
+                    if (Math.hypot(obj.vx || 0, obj.vy || 0) > 0.045) moving = true;
                 });
 
-                if (moving && glideSteps < 40) {
-                    requestAnimationFrame(glideStep);
+                if (moving && frames < maxFrames) {
+                    requestAnimationFrame(physicsStep);
                 } else {
-                    callback();
+                    // Restbewegung sauber auf Null setzen.
+                    objects.forEach(obj => {
+                        if (!obj.out && Math.hypot(obj.vx || 0, obj.vy || 0) <= 0.08) {
+                            stopVelocity(obj);
+                        }
+                    });
+                    updateTargetBallDOM();
+                    finish();
                 }
             }
-            requestAnimationFrame(glideStep);
+
+            requestAnimationFrame(physicsStep);
         }
 
         function endRundeAutomatically() {
