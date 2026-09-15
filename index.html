@@ -390,6 +390,81 @@
             cursor: not-allowed;
         }
 
+
+
+        .instructions-button {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.25);
+            color: #ffeb3b;
+            padding: 8px 14px;
+            margin-top: 10px;
+            border-radius: 7px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .instructions-button:hover {
+            background: rgba(255,255,255,0.06);
+        }
+
+        .instructions-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.78);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            box-sizing: border-box;
+        }
+
+        .instructions-window {
+            width: 100%;
+            max-width: 430px;
+            max-height: 88vh;
+            overflow-y: auto;
+            background: #172027;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 12px;
+            padding: 16px;
+            box-sizing: border-box;
+            color: #cfd8dc;
+            font-size: 0.82rem;
+            line-height: 1.45;
+            text-align: left;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.55);
+        }
+
+        .instructions-window h3 {
+            margin: 0 0 12px 0;
+            color: #ffeb3b;
+            font-size: 1rem;
+            text-align: center;
+        }
+
+        .instructions-window p {
+            margin: 9px 0;
+        }
+
+        .instructions-window strong {
+            color: #fff;
+        }
+
+        .instructions-close {
+            display: block;
+            width: 100%;
+            margin-top: 14px;
+            padding: 10px;
+            background: #0055a4;
+            border: none;
+            border-radius: 7px;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
         #endScreenOverlay {
             display: none;
             position: absolute;
@@ -489,6 +564,34 @@ button, input, #aimDonnee {
 
             <button class="btn" id="startBtn" onclick="startGame()">Spiel starten</button>
 
+            <button class="instructions-button" type="button" onclick="openInstructions()">SO WIRD GESPIELT</button>
+
+            <div class="instructions-overlay" id="instructionsOverlay" onclick="closeInstructions(event)">
+                <div class="instructions-window" onclick="event.stopPropagation()">
+                    <h3>SO WIRD GESPIELT</h3>
+
+                    <p><strong>🟡 Gelber Kreis – Donnée</strong><br>
+                    Der gelbe Kreis zeigt den <strong>Aufschlagpunkt (Donnée)</strong> deiner Kugel.
+                    Steuere den gelben Kreis auf dem Spielfeld an die gewünschte Position.</p>
+
+                    <p><strong>💪 Kraftregler</strong><br>
+                    Mit dem Kraftregler bestimmst du die <strong>Stärke deines Wurfs</strong>.
+                    Je stärker der Wurf, desto weiter fliegt bzw. rollt deine Kugel nach dem Aufschlag.</p>
+
+                    <p><strong>🎯 Wurf ausführen</strong><br>
+                    Wenn Donnée und Wurfstärke richtig eingestellt sind, drücke unten auf den
+                    <strong>Wurf-Button</strong>.</p>
+
+                    <p>Die Kugel wird aus dem Wurfkreis geworfen, fliegt zum eingestellten
+                    Donnée-Punkt und rollt anschließend entsprechend der gewählten Wurfstärke weiter.</p>
+
+                    <p><strong>ALLGEMEINE BOULE-REGELN</strong><br>
+                    Es gelten grundsätzlich die allgemeinen Regeln des Pétanque/Boule-Spiels.</p>
+
+                    <button class="instructions-close" type="button" onclick="closeInstructions()">SCHLIESSEN</button>
+                </div>
+            </div>
+
             <div class="legal-info">
                 <h3>Impressum</h3>
                 Blankenhagen Spieleentwicklung<br>
@@ -551,6 +654,7 @@ button, input, #aimDonnee {
             </div>
             <button class="btn-wurf" id="btnWurf" onclick="executePlayerThrow()">Wurf im Bogen ausführen</button>
         </div>
+
     </div>
 
     <script>
@@ -620,6 +724,17 @@ button, input, #aimDonnee {
                 osc.start();
                 osc.stop(audioCtx.currentTime + 0.15);
             } catch(e) {}
+        }
+
+        function openInstructions() {
+            const overlay = document.getElementById('instructionsOverlay');
+            if (overlay) overlay.style.display = 'flex';
+        }
+
+        function closeInstructions(event) {
+            if (event && event.target !== event.currentTarget) return;
+            const overlay = document.getElementById('instructionsOverlay');
+            if (overlay) overlay.style.display = 'none';
         }
 
         function startGame() {
