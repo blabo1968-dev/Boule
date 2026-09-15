@@ -889,81 +889,73 @@ button, input, #aimDonnee {
         }
 
         function getAITacticalPlan(startX, startY) {
-            const active = playedBalls.filter(b => !b.out);
-            const opponent = active.filter(b => b.team === 'blue');
-            const own = active.filter(b => b.team === 'red');
-
             const blueClosest = getClosestBallForTeam('blue');
             const redClosest = getClosestBallForTeam('red');
             const blueDistance = blueClosest ? distanceBetween(blueClosest, targetBallObj) : Infinity;
             const redDistance = redClosest ? distanceBetween(redClosest, targetBallObj) : Infinity;
 
-            let tactic = 'legen';
-            let target = null;
+            // Grundtaktik: ca. 90 % legen, ca. 10 % schießen.
+            // Schießen nur dann, wenn die KI nicht vorne liegt.
+            const shouldShoot = !!blueClosest && blueDistance < redDistance && Math.random() < 0.10;
+            const tactic = shouldShoot ? 'schiessen' : 'legen';
 
-            // Wenn Blau vorne liegt, hat ein Schuss auf die beste blaue Kugel Vorrang.
-            if (blueClosest && blueDistance < redDistance) {
-                const shootChance = difficulty === 'schwer' ? 0.82 : difficulty === 'mittel' ? 0.62 : 0.40;
-                if (Math.random() < shootChance) {
-                    tactic = 'schiessen';
-                    target = blueClosest;
-                }
-            }
+            let tx, ty, dirX, dirY, speed;
 
-            // Wenn keine gegnerische Kugel gefährlich liegt, wird gelegt.
-            if (tactic === 'legen') {
-                const angle = Math.random() * Math.PI * 2;
-                const radius = difficulty === 'schwer' ? 12 + Math.random() * 12 :
-                               difficulty === 'mittel' ? 14 + Math.random() * 20 :
-                               18 + Math.random() * 28;
-                target = {
-                    x: targetBallObj.x + Math.cos(angle) * radius,
-                    y: targetBallObj.y + Math.sin(angle) * radius
-                };
-            }
-
-            // Seltene taktische Variante: Schweinchen leicht verschieben,
-            // aber nicht mehr als Standardziel jedes Wurfs.
-            if (difficulty !== 'leicht' && Math.random() < 0.12 && opponent.length === 0) {
-                tactic = 'jack';
-                target = {
-                    x: targetBallObj.x + (Math.random() - 0.5) * 18,
-                    y: targetBallObj.y + (Math.random() - 0.5) * 18
-                };
-            }
-
-            let tx = target.x;
-            let ty = target.y;
-            let aimError = difficulty === 'schwer' ? 2.5 : difficulty === 'mittel' ? 6 : 11;
-
-            if (tactic === 'schiessen' && target) {
-                // Beim Schießen wird die gegnerische Kugel selbst zum Ziel.
-                tx = target.x;
-                ty = target.y;
-                aimError *= 0.65;
-            }
-
-            tx += (Math.random() - 0.5) * aimError * 2;
-            ty += (Math.random() - 0.5) * aimError * 2;
-
-            let dx = tx - startX;
-            let dy = ty - startY;
-            let dist = Math.max(1, Math.hypot(dx, dy));
-            let dirX = dx / dist;
-            let dirY = dy / dist;
-
-            // Je nach taktischem Ziel unterschiedliche Wurfstärke.
-            let speed;
             if (tactic === 'schiessen') {
-                speed = difficulty === 'schwer' ? 3.05 : difficulty === 'mittel' ? 2.85 : 2.55;
-            } else if (tactic === 'jack') {
-                speed = difficulty === 'schwer' ? 2.25 : 2.05;
+                // Ausschließlich die gegnerische Kugel beschießen, die der Sau am nächsten ist.
+                tx = blueClosest.x;
+                ty = blueClosest.y;
+
+                const hitChance = difficulty === 'schwer' ? 0.88 : difficulty === 'mittel' ? 0.68 : 0.45;
+                const hit = Math.random() < hitChance;
+                let error = difficulty === 'schwer' ? 1.8 : difficulty === 'mittel' ? 4.5 : 9.0;
+                if (!hit) error *= difficulty === 'schwer' ? 2.5 : difficulty === 'mittel' ? 2.8 : 3.2;
+
+                tx += (Math.random() - 0.5) * error * 2;
+                ty += (Math.random() - 0.5) * error * 2;
+
+                const dx = tx - startX;
+                const dy = ty - startY;
+                const dist = Math.max(1, Math.hypot(dx, dy));
+                dirX = dx / dist;
+                dirY = dy / dist;
+                speed = difficulty === 'schwer' ? 3.35 : difficulty === 'mittel' ? 3.05 : 2.75;
             } else {
-                // Legen: Zielentfernung beeinflusst die Kraft, damit nicht jeder
-                // Wurf mit maximaler Geschwindigkeit erfolgt.
-                const desired = Math.min(1, dist / 260);
-                speed = 0.75 + desired * 2.15;
+                // LEGEN: erst gewünschten Endpunkt nahe der Sau wählen.
+                const finalRadius = redClosest && redDistance < blueDistance
+                    ? (difficulty === 'schwer' ? 8 + Math.random() * 12 : difficulty === 'mittel' ? 10 + Math.random() * 16 : 14 + Math.random() * 22)
+                    : (difficulty === 'schwer' ? 5 + Math.random() * 10 : difficulty === 'mittel' ? 7 + Math.random() * 14 : 10 + Math.random() * 20);
+
+                const angle = Math.random() * Math.PI * 2;
+                const finalX = targetBallObj.x + Math.cos(angle) * finalRadius;
+                const finalY = targetBallObj.y + Math.sin(angle) * finalRadius;
+
+                let fdx = finalX - startX;
+                let fdy = finalY - startY;
+                const fdist = Math.max(1, Math.hypot(fdx, fdy));
+                dirX = fdx / fdist;
+                dirY = fdy / fdist;
+
+                // Die Kugel landet vor dem Endpunkt und rollt von dort kontrolliert weiter.
+                const rollDistance = difficulty === 'schwer' ? 9 + Math.random() * 6 : difficulty === 'mittel' ? 11 + Math.random() * 9 : 14 + Math.random() * 13;
+                tx = finalX - dirX * rollDistance;
+                ty = finalY - dirY * rollDistance;
+
+                const layError = difficulty === 'schwer' ? 1.5 : difficulty === 'mittel' ? 3.5 : 7.0;
+                tx += (Math.random() - 0.5) * layError * 2;
+                ty += (Math.random() - 0.5) * layError * 2;
+
+                speed = difficulty === 'schwer' ? 0.98 + Math.random() * 0.12 : difficulty === 'mittel' ? 1.02 + Math.random() * 0.16 : 1.08 + Math.random() * 0.22;
             }
+
+            tx = Math.max(12, Math.min(terrain.clientWidth - 12, tx));
+            ty = Math.max(12, Math.min(terrain.clientHeight - 12, ty));
+
+            const dx = tx - startX;
+            const dy = ty - startY;
+            const dist = Math.max(1, Math.hypot(dx, dy));
+            dirX = dx / dist;
+            dirY = dy / dist;
 
             return { dirX, dirY, speed, tactic, targetX: tx, targetY: ty };
         }
