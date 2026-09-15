@@ -92,6 +92,38 @@
             color: #cfd8dc;
         }
 
+        .surface-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 6px;
+        }
+
+        .surface-option {
+            width: 100%;
+            padding: 9px 6px;
+            font-size: 0.78rem;
+            font-weight: bold;
+            border-radius: 6px;
+            border: 1px solid #0055a4;
+            background: #101d3f;
+            color: #fff;
+            cursor: pointer;
+            box-sizing: border-box;
+        }
+
+        .surface-option.selected {
+            background: #0055a4;
+            border-color: #fff;
+            box-shadow: 0 0 8px rgba(0, 170, 255, 0.5);
+        }
+
+        .surface-description {
+            font-size: 0.68rem;
+            color: #aeb9c4;
+            margin-top: 4px;
+            line-height: 1.25;
+        }
+
         select, .btn {
             width: 100%;
             padding: 9px;
@@ -465,6 +497,7 @@
             cursor: pointer;
         }
 
+        /* Abschlussbildschirm – kompakt, damit beide Buttons im Spielfeld sichtbar bleiben */
         #endScreenOverlay {
             display: none;
             position: absolute;
@@ -475,34 +508,44 @@
             background: rgba(11, 19, 41, 0.95);
             z-index: 50;
             flex-direction: column;
-            justify-content: center;
+            justify-content: flex-start;
             align-items: center;
-            padding: 20px;
+            padding: 8px 10px;
             box-sizing: border-box;
             text-align: center;
             border-radius: 8px;
+            overflow-y: auto;
         }
 
         #endScreenOverlay h3 {
-            font-size: 1.3rem;
+            font-size: 1.18rem;
             color: #ffeb3b;
-            margin-bottom: 10px;
+            margin: 0 0 6px 0;
             text-transform: uppercase;
+            line-height: 1.15;
         }
 
         #endScreenOverlay p {
-            font-size: 0.9rem;
+            font-size: 0.82rem;
             color: #cfd8dc;
-            margin-bottom: 20px;
-            line-height: 1.4;
+            margin: 0 0 8px 0;
+            line-height: 1.22;
+            white-space: pre-line;
         }
 
         .end-btn-group {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 6px;
             width: 100%;
             max-width: 250px;
+        }
+
+        .end-btn-group .btn {
+            margin-top: 0;
+            padding: 7px 6px;
+            font-size: 0.82rem;
+            line-height: 1.15;
         }
     
 /* Mobile-/Touch-Unterstützung – bestehendes Spielprinzip bleibt unverändert */
@@ -560,6 +603,26 @@ button, input, #aimDonnee {
                     <option value="mittel" selected>Mittel (Taktisch)</option>
                     <option value="schwer">Herausfordernd (Starker Tireur)</option>
                 </select>
+            </div>
+
+            <div class="menu-group">
+                <label>Bodenbeschaffenheit:</label>
+                <div class="surface-options" id="groundOptions">
+                    <button type="button" class="surface-option" data-ground="glatt" onclick="selectGround('glatt')">GLATT</button>
+                    <button type="button" class="surface-option selected" data-ground="normal" onclick="selectGround('normal')">NORMAL / TROCKEN</button>
+                    <button type="button" class="surface-option" data-ground="kiesig" onclick="selectGround('kiesig')">KIESIG</button>
+                    <button type="button" class="surface-option" data-ground="tief" onclick="selectGround('tief')">TIEFER BODEN</button>
+                </div>
+                <div class="surface-description">Der Untergrund beeinflusst Aufprall, Reibung und Auslauf der Kugel.</div>
+            </div>
+
+            <div class="menu-group">
+                <label>Witterung:</label>
+                <div class="surface-options" id="weatherOptions">
+                    <button type="button" class="surface-option selected" data-weather="trocken" onclick="selectWeather('trocken')">☀️ TROCKEN</button>
+                    <button type="button" class="surface-option" data-weather="nass" onclick="selectWeather('nass')">🌧️ NASS</button>
+                </div>
+                <div class="surface-description">Nässe bremst die Kugel und verändert ihr Verhalten nach dem Aufprall.</div>
             </div>
 
             <button class="btn" id="startBtn" onclick="startGame()">Spiel starten</button>
@@ -737,6 +800,47 @@ button, input, #aimDonnee {
             if (overlay) overlay.style.display = 'none';
         }
 
+        let selectedGround = 'normal';
+        let selectedWeather = 'trocken';
+
+        const groundPhysics = {
+            glatt:   { friction: 0.038, bounce: 1.00, rollFactor: 1.10, label: 'GLATT' },
+            normal:  { friction: 0.055, bounce: 0.94, rollFactor: 1.00, label: 'NORMAL / TROCKEN' },
+            kiesig:  { friction: 0.075, bounce: 0.82, rollFactor: 0.88, label: 'KIESIG' },
+            tief:    { friction: 0.105, bounce: 0.68, rollFactor: 0.72, label: 'TIEFER BODEN' }
+        };
+
+        const weatherPhysics = {
+            trocken: { friction: 1.00, bounce: 1.00, label: 'TROCKEN' },
+            nass:    { friction: 1.32, bounce: 0.86, label: 'NASS' }
+        };
+
+        function selectGround(value) {
+            selectedGround = value;
+            document.querySelectorAll('[data-ground]').forEach(btn => {
+                btn.classList.toggle('selected', btn.dataset.ground === value);
+            });
+        }
+
+        function selectWeather(value) {
+            selectedWeather = value;
+            document.querySelectorAll('[data-weather]').forEach(btn => {
+                btn.classList.toggle('selected', btn.dataset.weather === value);
+            });
+        }
+
+        function getSurfacePhysics() {
+            const ground = groundPhysics[selectedGround] || groundPhysics.normal;
+            const weather = weatherPhysics[selectedWeather] || weatherPhysics.trocken;
+            return {
+                friction: ground.friction * weather.friction,
+                bounce: ground.bounce * weather.bounce,
+                rollFactor: ground.rollFactor,
+                groundLabel: ground.label,
+                weatherLabel: weather.label
+            };
+        }
+
         function startGame() {
             gameMode = 'tet';
             difficulty = document.getElementById('selectDifficulty').value;
@@ -756,6 +860,7 @@ button, input, #aimDonnee {
 
             randomizeTargetPosition();
             initGame();
+            document.getElementById('statusBar').innerText = `Boden: ${groundPhysics[selectedGround].label} | Witterung: ${weatherPhysics[selectedWeather].label}`;
         }
 
         const powerRangeInput = document.getElementById('powerRange');
@@ -837,6 +942,49 @@ button, input, #aimDonnee {
                 document.getElementById('statusBar').innerText = "Aufnahme beendet! Auswertung...";
                 setTimeout(endRundeAutomatically, 1200);
                 return;
+            }
+
+            // Wenn eine Mannschaft keine Kugeln mehr hat und die andere mit
+            // diesem Wurf den 13. Punkt erreicht, ist das Match sofort beendet.
+            // Die noch nicht gespielten Kugeln müssen nicht mehr geworfen werden.
+            if (ballsLeftBlue <= 0 || ballsLeftRed <= 0) {
+                const activeBalls = playedBalls.filter(b => !b.out);
+                if (activeBalls.length > 0) {
+                    let closest = activeBalls[0];
+                    let minDistance = Math.hypot(closest.x - targetBallObj.x, closest.y - targetBallObj.y);
+
+                    for (let i = 1; i < activeBalls.length; i++) {
+                        const dist = Math.hypot(activeBalls[i].x - targetBallObj.x, activeBalls[i].y - targetBallObj.y);
+                        if (dist < minDistance) {
+                            minDistance = dist;
+                            closest = activeBalls[i];
+                        }
+                    }
+
+                    let roundPoints = 0;
+                    activeBalls.forEach(b => {
+                        if (b.team === closest.team) {
+                            let isCloser = true;
+                            activeBalls.forEach(o => {
+                                if (o.team !== closest.team) {
+                                    const distWinner = Math.hypot(b.x - targetBallObj.x, b.y - targetBallObj.y);
+                                    const distOpponent = Math.hypot(o.x - targetBallObj.x, o.y - targetBallObj.y);
+                                    if (distWinner >= distOpponent) isCloser = false;
+                                }
+                            });
+                            if (isCloser) roundPoints++;
+                        }
+                    });
+
+                    const currentScore = closest.team === 'blue' ? scoreBlue : scoreRed;
+                    if (currentScore + roundPoints >= 13) {
+                        isProcessing = true;
+                        document.getElementById('btnWurf').disabled = true;
+                        document.getElementById('statusBar').innerText = "13 Punkte erreicht! Match beendet.";
+                        setTimeout(endRundeAutomatically, 600);
+                        return;
+                    }
+                }
             }
 
             if (ballsLeftBlue <= 0) {
@@ -1021,10 +1169,10 @@ button, input, #aimDonnee {
                 tx = blueClosest.x;
                 ty = blueClosest.y;
 
-                const hitChance = difficulty === 'schwer' ? 0.88 : difficulty === 'mittel' ? 0.68 : 0.45;
+                const hitChance = difficulty === 'schwer' ? 0.88 : difficulty === 'mittel' ? 0.68 : 0.28;
                 const hit = Math.random() < hitChance;
-                let error = difficulty === 'schwer' ? 1.8 : difficulty === 'mittel' ? 4.5 : 9.0;
-                if (!hit) error *= difficulty === 'schwer' ? 2.5 : difficulty === 'mittel' ? 2.8 : 3.2;
+                let error = difficulty === 'schwer' ? 1.8 : difficulty === 'mittel' ? 4.5 : 14.0;
+                if (!hit) error *= difficulty === 'schwer' ? 2.5 : difficulty === 'mittel' ? 2.8 : 3.8;
 
                 tx += (Math.random() - 0.5) * error * 2;
                 ty += (Math.random() - 0.5) * error * 2;
@@ -1034,12 +1182,12 @@ button, input, #aimDonnee {
                 const dist = Math.max(1, Math.hypot(dx, dy));
                 dirX = dx / dist;
                 dirY = dy / dist;
-                speed = difficulty === 'schwer' ? 3.35 : difficulty === 'mittel' ? 3.05 : 2.75;
+                speed = difficulty === 'schwer' ? 3.35 : difficulty === 'mittel' ? 3.05 : 2.60;
             } else {
                 // LEGEN: erst gewünschten Endpunkt nahe der Sau wählen.
                 const finalRadius = redClosest && redDistance < blueDistance
-                    ? (difficulty === 'schwer' ? 8 + Math.random() * 12 : difficulty === 'mittel' ? 10 + Math.random() * 16 : 14 + Math.random() * 22)
-                    : (difficulty === 'schwer' ? 5 + Math.random() * 10 : difficulty === 'mittel' ? 7 + Math.random() * 14 : 10 + Math.random() * 20);
+                    ? (difficulty === 'schwer' ? 8 + Math.random() * 12 : difficulty === 'mittel' ? 10 + Math.random() * 16 : 20 + Math.random() * 30)
+                     : (difficulty === 'schwer' ? 5 + Math.random() * 10 : difficulty === 'mittel' ? 7 + Math.random() * 14 : 16 + Math.random() * 28);
 
                 const angle = Math.random() * Math.PI * 2;
                 const finalX = targetBallObj.x + Math.cos(angle) * finalRadius;
@@ -1052,15 +1200,15 @@ button, input, #aimDonnee {
                 dirY = fdy / fdist;
 
                 // Die Kugel landet vor dem Endpunkt und rollt von dort kontrolliert weiter.
-                const rollDistance = difficulty === 'schwer' ? 9 + Math.random() * 6 : difficulty === 'mittel' ? 11 + Math.random() * 9 : 14 + Math.random() * 13;
+                const rollDistance = difficulty === 'schwer' ? 9 + Math.random() * 6 : difficulty === 'mittel' ? 11 + Math.random() * 9 : 18 + Math.random() * 16;
                 tx = finalX - dirX * rollDistance;
                 ty = finalY - dirY * rollDistance;
 
-                const layError = difficulty === 'schwer' ? 1.5 : difficulty === 'mittel' ? 3.5 : 7.0;
+                const layError = difficulty === 'schwer' ? 1.5 : difficulty === 'mittel' ? 3.5 : 11.0;
                 tx += (Math.random() - 0.5) * layError * 2;
                 ty += (Math.random() - 0.5) * layError * 2;
 
-                speed = difficulty === 'schwer' ? 0.98 + Math.random() * 0.12 : difficulty === 'mittel' ? 1.02 + Math.random() * 0.16 : 1.08 + Math.random() * 0.22;
+                speed = difficulty === 'schwer' ? 0.98 + Math.random() * 0.12 : difficulty === 'mittel' ? 1.02 + Math.random() * 0.16 : 1.12 + Math.random() * 0.28;
             }
 
             tx = Math.max(12, Math.min(terrain.clientWidth - 12, tx));
@@ -1143,11 +1291,12 @@ button, input, #aimDonnee {
                     return;
                 }
 
+                const surface = getSurfacePhysics();
                 const newBall = {
                     x: landX,
                     y: landY,
-                    vx: dirX * speed,
-                    vy: dirY * speed,
+                    vx: dirX * speed * surface.rollFactor,
+                    vy: dirY * speed * surface.rollFactor,
                     team: team,
                     element: ballEl,
                     out: false,
@@ -1282,7 +1431,9 @@ button, input, #aimDonnee {
                             const a = objects[i];
                             const b = objects[j];
                             if (a.out || b.out) continue;
-                            collideObjects(a, b, (a.team === 'target' || b.team === 'target') ? 0.72 : 0.58, false);
+                            const surface = getSurfacePhysics();
+                            const baseRestitution = (a.team === 'target' || b.team === 'target') ? 0.72 : 0.58;
+                            collideObjects(a, b, baseRestitution * surface.bounce, false);
                         }
                     }
 
@@ -1305,7 +1456,9 @@ button, input, #aimDonnee {
                 objects.forEach(obj => {
                     if (obj.out) return;
                     // Gleichmäßige Rollreibung statt Frame-zu-Frame-Sprünge.
-                    applyFriction(obj, obj === targetBallObj ? 0.045 : 0.055);
+                    const surface = getSurfacePhysics();
+                    const baseFriction = obj === targetBallObj ? 0.045 : 0.055;
+                    applyFriction(obj, baseFriction * surface.friction / 0.055);
                     if (Math.hypot(obj.vx || 0, obj.vy || 0) > 0.045) moving = true;
                 });
 
