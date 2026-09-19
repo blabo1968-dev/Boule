@@ -629,7 +629,7 @@
 
             <!-- NEU: Direkte Auswahl statt Handy-Popup -->
             <div class="menu-group">
-                <label>KI-Schwierigkeit:</label>
+                <label>Silke-Schwierigkeit:</label>
 
                 <div class="difficulty-options">
 
@@ -881,14 +881,14 @@
             </div>
 
 
-            <!-- Rechte Seite: KI Rot -->
+            <!-- Rechte Seite: Silke Rot -->
             <div class="score-board-right">
 
                 <div class="counter-panel red-panel">
 
                     <div class="counter-title"
                          id="kiTitle">
-                        KI [Rest: <span id="restRed">3</span>]
+                        Silke [Rest: <span id="restRed">3</span>]
                     </div>
 
                     <div class="score-list"
@@ -1244,7 +1244,7 @@
 
 
             document.getElementById('kiTitle').innerHTML =
-                `KI [Rest: <span id="restRed">${ballsLeftRed}</span>]`;
+                `Silke [Rest: <span id="restRed">${ballsLeftRed}</span>]`;
 
 
             document
@@ -1437,7 +1437,7 @@
                     '.red-panel .counter-title'
                 )
                 .innerHTML =
-                `KI [Rest: <span>${ballsLeftRed}</span>]`;
+                `Silke [Rest: <span>${ballsLeftRed}</span>]`;
 
         }
 
@@ -1815,7 +1815,7 @@
                     document.getElementById(
                         'statusBar'
                     ).innerText =
-                        `Schweinchen im Aus! KI erhält ${earnedPoints} Punkt(e).`;
+                        `Schweinchen im Aus! Silke erhält ${earnedPoints} Punkt(e).`;
 
                 }
 
@@ -1925,7 +1925,7 @@
                     ? 'Du liegst vorne'
                     : (
                         leadingTeam === 'red'
-                            ? 'KI liegt vorne'
+                            ? 'Silke liegt vorne'
                             : 'Keine Kugel im Spiel'
                     );
 
@@ -1936,7 +1936,7 @@
                 `Am Zug: ${
                     currentTurn === 'blue'
                         ? 'Du (Blau)'
-                        : 'KI (Rot)'
+                        : 'Silke (Rot)'
                 } | ${leadingText}`;
 
         }
@@ -2609,12 +2609,12 @@
 
             const tacticText =
                 plan.tactic === 'schiessen'
-                    ? 'KI: SCHIESSEN'
+                    ? 'Silke: SCHIESSEN'
                     :
                     plan.tactic === 'jack'
-                        ? 'KI: SCHWEINCHEN'
+                        ? 'Silke: SCHWEINCHEN'
                         :
-                        'KI: LEGEN';
+                        'Silke: LEGEN';
 
 
             document.getElementById(
@@ -3631,7 +3631,7 @@
                 document.getElementById(
                     'statusBar'
                 ).innerText =
-                    `Aufnahme beendet! KI gewinnt ${points} Punkt(e).`;
+                    `Aufnahme beendet! Silke gewinnt ${points} Punkt(e).`;
 
             }
 
@@ -3704,13 +3704,13 @@
             ).innerText =
                 isBlueWinner
                     ? "Turniersieg für dich!"
-                    : "KI gewinnt das Match!";
+                    : "Silke gewinnt das Match!";
 
 
             document.getElementById(
                 'endScreenText'
             ).innerText =
-                `Endstand: Du ${scoreBlue} : ${scoreRed} KI\nMöchtest du noch eine Runde spielen?`;
+                `Endstand: Du ${scoreBlue} : ${scoreRed} Silke\nMöchtest du noch eine Runde spielen?`;
 
 
             document.getElementById(
