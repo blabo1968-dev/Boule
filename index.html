@@ -602,6 +602,200 @@
                 min-height: 40px;
             }
         }
+
+
+        /* =========================================================
+           SPIELFELD-OPTIK – natürliche Pétanque-Bahn wie Referenzbild
+           Nur Darstellung: Spielmechanik und JavaScript bleiben unverändert.
+           ========================================================= */
+        .game-header h2 {
+            font-size: 1.05rem;
+            letter-spacing: 0.4px;
+            text-shadow: 0 2px 3px rgba(0,0,0,0.8);
+        }
+
+        .status-bar {
+            background: linear-gradient(90deg, #075b9e 0%, #126eaa 50%, #c92d2d 100%);
+            border: none;
+            border-radius: 3px;
+            color: #fff;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.35);
+        }
+
+        .play-layout {
+            gap: 10px;
+            align-items: stretch;
+        }
+
+        .score-board-left,
+        .score-board-right {
+            width: 44px;
+        }
+
+        .counter-panel {
+            background: linear-gradient(180deg, rgba(12,31,43,0.96), rgba(5,19,28,0.96));
+            border: 1px solid rgba(255,255,255,0.28);
+            border-top: 5px solid #148ddd;
+            border-radius: 4px;
+            padding: 5px 2px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.32);
+        }
+
+        .red-panel.counter-panel {
+            border-top-color: #f33b35;
+        }
+
+        .counter-title {
+            font-size: 0.54rem;
+            color: #fff;
+            text-shadow: 0 1px 2px #000;
+        }
+
+        .blue-panel .counter-title { color: #48b2ff; }
+        .red-panel .counter-title { color: #ff5752; }
+
+        .score-item {
+            width: 20px;
+            height: 16px;
+            border-radius: 2px;
+            background: rgba(0,0,0,0.40);
+            color: #9db1bd;
+        }
+
+        .blue-panel .score-item.active {
+            background: linear-gradient(180deg,#168ee0,#0065ad);
+        }
+
+        .red-panel .score-item.active {
+            background: linear-gradient(180deg,#f0443c,#c91d19);
+        }
+
+        /* Die bisherige graue Punktfläche wird zu einer natürlichen Kies-/Sandbahn. */
+        #terrain {
+            width: min(300px, calc(100vw - 108px));
+            height: 430px;
+            border: 7px solid #3b2b20;
+            border-radius: 2px;
+            box-shadow:
+                inset 0 0 0 2px rgba(255,255,255,0.28),
+                inset 0 0 30px rgba(72,48,27,0.42),
+                0 8px 18px rgba(0,0,0,0.45);
+            background-color: #a99676;
+            background-image:
+                radial-gradient(circle at 12% 18%, rgba(77,60,40,.28) 0 1.2px, transparent 1.8px),
+                radial-gradient(circle at 73% 32%, rgba(235,221,190,.34) 0 1.3px, transparent 2px),
+                radial-gradient(circle at 34% 74%, rgba(78,61,43,.23) 0 1px, transparent 1.8px),
+                radial-gradient(circle at 86% 82%, rgba(230,214,181,.28) 0 1.1px, transparent 1.8px),
+                radial-gradient(ellipse at 50% 40%, rgba(202,183,148,.34), transparent 58%),
+                linear-gradient(105deg, #aa9878 0%, #b09d7b 38%, #9d8b6d 72%, #b5a27f 100%);
+            background-size: 17px 17px, 23px 23px, 19px 19px, 27px 27px, 100% 100%, 100% 100%;
+            background-position: 0 0, 7px 4px, 3px 9px, 11px 2px, 0 0, 0 0;
+        }
+
+        /* feine Linien wie auf einer echten Bahn */
+        #terrain::before {
+            content: "";
+            position: absolute;
+            inset: 9px;
+            border: 1px solid rgba(245,232,204,0.38);
+            box-shadow: inset 0 0 18px rgba(70,48,31,0.16);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        #terrain::after {
+            content: "";
+            position: absolute;
+            left: 50%;
+            top: 0;
+            width: 1px;
+            height: 100%;
+            background: rgba(255,244,214,0.10);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .ball {
+            width: 16px;
+            height: 16px;
+            border: 1px solid rgba(255,255,255,0.72);
+            box-shadow:
+                2px 3px 4px rgba(0,0,0,0.58),
+                inset -2px -2px 3px rgba(0,0,0,0.24),
+                inset 2px 2px 3px rgba(255,255,255,0.25);
+            z-index: 5;
+        }
+
+        .blue-ball {
+            background:
+                radial-gradient(circle at 28% 25%, #f0f5f7 0 4%, transparent 5%),
+                radial-gradient(circle at 32% 28%, #68b8ee 0%, #1c78b5 42%, #074d7e 78%, #063a5c 100%);
+        }
+
+        .red-ball {
+            background:
+                radial-gradient(circle at 28% 25%, #fff0ee 0 4%, transparent 5%),
+                radial-gradient(circle at 32% 28%, #e86b65 0%, #bd302c 42%, #851d1b 78%, #641312 100%);
+        }
+
+        .target-ball {
+            width: 13px;
+            height: 13px;
+            border: 1px solid #57450e;
+            background: radial-gradient(circle at 28% 25%, #fffbd0 0 7%, #f5dc3b 34%, #c59c09 78%, #8d6b00 100%);
+            box-shadow: 1px 2px 4px rgba(0,0,0,0.65), inset 1px 1px 2px rgba(255,255,255,0.55);
+            z-index: 10;
+        }
+
+        #aimDonnee {
+            width: 25px;
+            height: 25px;
+            border: 3px dashed #ffe900;
+            background: rgba(255,230,0,0.08);
+            box-shadow: 0 0 4px rgba(0,0,0,0.45);
+            z-index: 6;
+        }
+
+        .circle-abwurf {
+            width: 48px;
+            height: 48px;
+            bottom: 13px;
+            border: 3px solid #f03d32;
+            background: rgba(218,77,58,0.10);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.35);
+            z-index: 4;
+        }
+
+        .control-panel {
+            background: linear-gradient(180deg, rgba(9,27,39,0.97), rgba(4,16,25,0.97));
+            border: 1px solid rgba(255,255,255,0.24);
+            border-radius: 4px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.35);
+        }
+
+        .btn-wurf {
+            background: linear-gradient(180deg,#ef3c32,#bd211d) !important;
+            border: 1px solid #ff645c !important;
+            border-radius: 2px !important;
+            text-transform: uppercase;
+            font-weight: 900;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.35) !important;
+        }
+
+        @media (max-width: 600px) {
+            #terrain {
+                height: min(430px, calc(100vh - 165px));
+                min-height: 330px;
+                border-width: 5px;
+            }
+
+            .play-layout { gap: 4px; }
+            .score-board-left,
+            .score-board-right { width: 39px; }
+        }
     </style>
 </head>
 
