@@ -624,7 +624,7 @@
         </div> 
 
         <div class="menu-group"> 
-            <label>Silke-Schwierigkeit:</label> 
+            <label>Jörg-Schwierigkeit:</label> 
 
             <div class="difficulty-options"> 
 
@@ -879,7 +879,7 @@
 
                 <div class="counter-title" 
                      id="kiTitle"> 
-                    Silke [Rest: <span id="restRed">3</span>] 
+                    Jörg [Rest: <span id="restRed">3</span>] 
                 </div> 
 
                 <div class="score-list" 
@@ -1220,7 +1220,7 @@ function startGame() {
         .style.display = 'none'; 
 
     document.getElementById('kiTitle').innerHTML = 
-        `Silke [Rest: <span id="restRed">${ballsLeftRed}</span>]`; 
+        `Jörg [Rest: <span id="restRed">${ballsLeftRed}</span>]`; 
 
     document 
         .getElementById('startScreen') 
@@ -1390,7 +1390,7 @@ function updateRestDisplay() {
     document 
         .querySelector('.red-panel .counter-title') 
         .innerHTML = 
-        `Silke [Rest: <span>${ballsLeftRed}</span>]`; 
+        `Jörg [Rest: <span>${ballsLeftRed}</span>]`; 
 
 } 
 
@@ -1652,7 +1652,7 @@ function handleTargetOutRule() {
             lastRoundWinner = 'red'; 
 
             document.getElementById('statusBar').innerText = 
-                `Schweinchen im Aus! Silke erhält ${earnedPoints} Punkt(e).`; 
+                `Schweinchen im Aus! Jörg erhält ${earnedPoints} Punkt(e).`; 
 
         } 
 
@@ -1723,7 +1723,7 @@ function updateStatus() {
             ? 'Du liegst vorne' 
             : ( 
                 leadingTeam === 'red' 
-                    ? 'Silke liegt vorne' 
+                    ? 'Jörg liegt vorne' 
                     : 'Keine Kugel im Spiel' 
             ); 
 
@@ -1731,7 +1731,7 @@ function updateStatus() {
         `Am Zug: ${ 
             currentTurn === 'blue' 
                 ? 'Du (Blau)' 
-                : 'Silke (Rot)' 
+                : 'Jörg (Rot)' 
         } | ${leadingText}`; 
 
 } 
@@ -2140,10 +2140,10 @@ function computerThrow() {
 
     const tacticText = 
         plan.tactic === 'schiessen' 
-            ? 'Silke: SCHIESSEN' 
+            ? 'Jörg: SCHIESSEN' 
             : plan.tactic === 'jack' 
-                ? 'Silke: SCHWEINCHEN' 
-                : 'Silke: LEGEN'; 
+                ? 'Jörg: SCHWEINCHEN' 
+                : 'Jörg: LEGEN'; 
 
     document.getElementById('statusBar').innerText = 
         tacticText; 
@@ -2782,7 +2782,7 @@ function endRundeAutomatically() {
         lastRoundWinner = 'red'; 
 
         document.getElementById('statusBar').innerText = 
-            `Aufnahme beendet! Silke gewinnt ${points} Punkt(e).`; 
+            `Aufnahme beendet! Jörg gewinnt ${points} Punkt(e).`; 
 
     } 
 
@@ -2832,10 +2832,10 @@ function handleMatchEnd() {
     document.getElementById('endScreenTitle').innerText = 
         isBlueWinner 
             ? "Turniersieg für dich!" 
-            : "Silke gewinnt das Match!"; 
+            : "Jörg gewinnt das Match!"; 
 
     document.getElementById('endScreenText').innerText = 
-        `Endstand: Du ${scoreBlue} : ${scoreRed} Silke\nMöchtest du noch eine Runde spielen?`; 
+        `Endstand: Du ${scoreBlue} : ${scoreRed} Jörg\nMöchtest du noch eine Runde spielen?`; 
 
     document.getElementById('endScreenOverlay').style.display = 'flex'; 
 
