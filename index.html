@@ -92,6 +92,32 @@
             color: #cfd8dc; 
         } 
  
+        /* NEU: direkter Spielmodus auf dem Startbildschirm */
+        .mode-options { 
+            display: grid; 
+            grid-template-columns: 1fr; 
+            gap: 6px; 
+        } 
+
+        .mode-option { 
+            width: 100%; 
+            padding: 9px 6px; 
+            font-size: 0.78rem; 
+            font-weight: bold; 
+            border-radius: 6px; 
+            border: 1px solid #0055a4; 
+            background: #101d3f; 
+            color: #fff; 
+            cursor: pointer; 
+            box-sizing: border-box; 
+        } 
+
+        .mode-option.selected { 
+            background: #0055a4; 
+            border-color: #fff; 
+            box-shadow: 0 0 8px rgba(0, 170, 255, 0.5); 
+        } 
+ 
         .surface-options { 
             display: grid; 
             grid-template-columns: repeat(2, 1fr); 
@@ -636,11 +662,25 @@
         </div> 
 
         <div class="menu-group"> 
-            <label for="selectMode">Spielmodus:</label> 
-            <select id="selectMode"> 
-                <option value="ki" selected>1 gegen 1 – Jörg (KI)</option> 
-                <option value="2spieler">2 Spieler – lokal</option> 
-            </select> 
+            <label>Spielmodus:</label> 
+
+            <div class="mode-options"> 
+
+                <button type="button" 
+                        class="mode-option selected" 
+                        data-playmode="ki" 
+                        onclick="selectPlayMode('ki')"> 
+                    1 gegen 1 – Jörg (KI) 
+                </button> 
+
+                <button type="button" 
+                        class="mode-option" 
+                        data-playmode="2spieler" 
+                        onclick="selectPlayMode('2spieler')"> 
+                    2 Spieler – lokal 
+                </button> 
+
+            </div> 
         </div> 
 
         <div class="menu-group"> 
@@ -969,7 +1009,7 @@ let selectedDifficulty = 'mittel';
 
 let gameMode = 'tet'; 
 
-/* NEU: Spielmodus KI oder 2 Spieler */
+/* Spielmodus KI oder 2 Spieler */
 let playMode = 'ki'; 
 
 let isProcessing = false; 
@@ -1086,11 +1126,6 @@ let selectedGround = 'normal';
 let selectedWeather = 'trocken'; 
 
 
-/* 
- * Untergrund-Physik:
- * unevenChance = Wahrscheinlichkeit einer kleinen Unebenheit
- * unevenStrength = Stärke der seitlichen Ablenkung
- */
 const groundPhysics = { 
 
     glatt: { 
@@ -1147,6 +1182,25 @@ const weatherPhysics = {
     } 
 
 }; 
+
+
+/* NEU: Spielmodus direkt auf dem Startbildschirm */
+function selectPlayMode(value) { 
+
+    playMode = value; 
+
+    document 
+        .querySelectorAll('[data-playmode]') 
+        .forEach(btn => { 
+
+            btn.classList.toggle( 
+                'selected', 
+                btn.dataset.playmode === value 
+            ); 
+
+        }); 
+
+} 
 
 
 function selectDifficulty(value) { 
@@ -1247,8 +1301,8 @@ function startGame() {
 
     gameMode = 'tet'; 
 
-    /* NEU: ausgewählten Spielmodus übernehmen */
-    playMode = document.getElementById('selectMode').value; 
+    /* Spielmodus wurde bereits direkt ausgewählt */
+    playMode = playMode || 'ki'; 
 
     difficulty = selectedDifficulty; 
 
@@ -1626,10 +1680,6 @@ function determineNextTurnByRules() {
 
     updateStatus(); 
 
-    /*
-     * Bei 2 Spielern gibt es KEINEN KI-Zug.
-     * Rot darf hier genauso selbst werfen wie Blau.
-     */
     if (currentTurn === 'red') { 
 
         if (playMode === '2spieler') { 
@@ -1956,10 +2006,6 @@ function executePlayerThrow() {
         return; 
     } 
 
-    /* 
-     * Im KI-Modus darf nur Blau selbst werfen.
-     * Im 2-Spieler-Modus darf Blau oder Rot werfen.
-     */
     if (playMode === '2spieler') { 
 
         if (currentTurn === 'blue' && ballsLeftBlue <= 0) { 
@@ -2739,11 +2785,6 @@ function resolvePhysicsAndCollisions(
             ); 
 
 
-            /*
-             * KLEINE UNEBENHEITEN / STEINE
-             *
-             * DIESE PHYSIK BLEIBT 1:1 ERHALTEN.
-             */
             if ( 
                 obj !== targetBallObj && 
                 Math.hypot( 
