@@ -377,19 +377,38 @@
             border: 1px solid #fff; 
         } 
  
+        /* EINZIGE ÄNDERUNG:
+           Unsichtbare 64x64-Touchfläche,
+           sichtbare Donnée bleibt 24x24. */
         #aimDonnee { 
             position: absolute; 
-            width: 24px; 
-            height: 24px; 
-            border: 2px dashed #ffeb3b; 
-            background: rgba(255, 235, 59, 0.15); 
+            width: 64px; 
+            height: 64px; 
+            border: none; 
+            background: transparent; 
             border-radius: 50%; 
             transform: translate(-50%, -50%); 
             pointer-events: auto; 
             cursor: pointer; 
             z-index: 8; 
-            box-shadow: 0 0 6px rgba(0,0,0,0.5); 
+            box-shadow: none; 
+            touch-action: none; 
         } 
+
+        #aimDonnee::after {
+            content: "";
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            border: 2px dashed #ffeb3b;
+            background: rgba(255, 235, 59, 0.15);
+            border-radius: 50%;
+            box-shadow: 0 0 6px rgba(0,0,0,0.5);
+            pointer-events: none;
+        }
  
         .control-panel { 
             margin-top: 6px; 
@@ -1703,8 +1722,10 @@ function getClosestTeamToTarget() {
             ); 
 
         if (dist < minDistance) { 
+
             minDistance = dist; 
             closest = activeBalls[i]; 
+
         } 
 
     } 
@@ -2194,8 +2215,10 @@ function getClosestBallForTeam(team) {
                 ); 
 
             if (d < min) { 
+
                 min = d; 
                 closest = b; 
+
             } 
 
         } 
