@@ -637,8 +637,9 @@
 
         <div class="menu-group"> 
             <label for="selectMode">Spielmodus:</label> 
-            <select id="selectMode" disabled> 
-                <option value="tet" selected>Tet (1 gegen 1, je 3 Kugeln)</option> 
+            <select id="selectMode"> 
+                <option value="ki" selected>1 gegen 1 – Jörg (KI)</option> 
+                <option value="2spieler">2 Spieler – lokal</option> 
             </select> 
         </div> 
 
@@ -839,7 +840,7 @@
             <div class="counter-panel blue-panel"> 
 
                 <div class="counter-title"> 
-                    Du [Rest: <span id="restBlue">3</span>] 
+                    Spieler 1 [Rest: <span id="restBlue">3</span>] 
                 </div> 
 
                 <div class="score-list" id="counter-blue"></div> 
@@ -967,6 +968,9 @@ let difficulty = 'mittel';
 let selectedDifficulty = 'mittel'; 
 
 let gameMode = 'tet'; 
+
+/* NEU: Spielmodus KI oder 2 Spieler */
+let playMode = 'ki'; 
 
 let isProcessing = false; 
 
@@ -1242,6 +1246,10 @@ function getSurfacePhysics() {
 function startGame() { 
 
     gameMode = 'tet'; 
+
+    /* NEU: ausgewählten Spielmodus übernehmen */
+    playMode = document.getElementById('selectMode').value; 
+
     difficulty = selectedDifficulty; 
 
     ballsLeftBlue = 3; 
@@ -1252,13 +1260,16 @@ function startGame() {
 
     isProcessing = false; 
     lastRoundWinner = 'blue'; 
+    currentTurn = 'blue'; 
 
     document 
         .getElementById('endScreenOverlay') 
         .style.display = 'none'; 
 
     document.getElementById('kiTitle').innerHTML = 
-        `Jörg [Rest: <span id="restRed">${ballsLeftRed}</span>]`; 
+        playMode === '2spieler'
+            ? `Spieler 2 (Rot) [Rest: <span id="restRed">${ballsLeftRed}</span>]`
+            : `Jörg [Rest: <span id="restRed">${ballsLeftRed}</span>]`; 
 
     document 
         .getElementById('startScreen') 
@@ -1423,12 +1434,14 @@ function updateRestDisplay() {
     document 
         .querySelector('.blue-panel .counter-title') 
         .innerHTML = 
-        `Du [Rest: <span>${ballsLeftBlue}</span>]`; 
+        `Spieler 1 [Rest: <span>${ballsLeftBlue}</span>]`; 
 
     document 
         .querySelector('.red-panel .counter-title') 
         .innerHTML = 
-        `Jörg [Rest: <span>${ballsLeftRed}</span>]`; 
+        playMode === '2spieler'
+            ? `Spieler 2 (Rot) [Rest: <span>${ballsLeftRed}</span>]`
+            : `Jörg [Rest: <span>${ballsLeftRed}</span>]`; 
 
 } 
 
@@ -1613,14 +1626,26 @@ function determineNextTurnByRules() {
 
     updateStatus(); 
 
+    /*
+     * Bei 2 Spielern gibt es KEINEN KI-Zug.
+     * Rot darf hier genauso selbst werfen wie Blau.
+     */
     if (currentTurn === 'red') { 
 
-        document.getElementById('btnWurf').disabled = true; 
+        if (playMode === '2spieler') { 
 
-        setTimeout( 
-            computerThrow, 
-            1000 
-        ); 
+            document.getElementById('btnWurf').disabled = false; 
+
+        } else { 
+
+            document.getElementById('btnWurf').disabled = true; 
+
+            setTimeout( 
+                computerThrow, 
+                1000 
+            ); 
+
+        } 
 
     } else { 
 
@@ -1677,7 +1702,9 @@ function handleTargetOutRule() {
             lastRoundWinner = 'blue'; 
 
             document.getElementById('statusBar').innerText = 
-                `Schweinchen im Aus! Du erhältst ${earnedPoints} Punkt(e).`; 
+                playMode === '2spieler'
+                    ? `Schweinchen im Aus! Spieler 1 erhält ${earnedPoints} Punkt(e).`
+                    : `Schweinchen im Aus! Du erhältst ${earnedPoints} Punkt(e).`; 
 
         } else { 
 
@@ -1690,7 +1717,9 @@ function handleTargetOutRule() {
             lastRoundWinner = 'red'; 
 
             document.getElementById('statusBar').innerText = 
-                `Schweinchen im Aus! Jörg erhält ${earnedPoints} Punkt(e).`; 
+                playMode === '2spieler'
+                    ? `Schweinchen im Aus! Spieler 2 erhält ${earnedPoints} Punkt(e).`
+                    : `Schweinchen im Aus! Jörg erhält ${earnedPoints} Punkt(e).`; 
 
         } 
 
@@ -1758,20 +1787,27 @@ function updateStatus() {
 
     let leadingTeam = getClosestTeamToTarget(); 
 
-    let leadingText = 
-        leadingTeam === 'blue' 
-            ? 'Du liegst vorne' 
-            : ( 
-                leadingTeam === 'red' 
-                    ? 'Jörg liegt vorne' 
-                    : 'Keine Kugel im Spiel' 
-            ); 
+    let leadingText; 
+
+    if (leadingTeam === 'blue') { 
+        leadingText = 
+            playMode === '2spieler' 
+                ? 'Spieler 1 liegt vorne' 
+                : 'Du liegst vorne'; 
+    } else if (leadingTeam === 'red') { 
+        leadingText = 
+            playMode === '2spieler' 
+                ? 'Spieler 2 liegt vorne' 
+                : 'Jörg liegt vorne'; 
+    } else { 
+        leadingText = 'Keine Kugel im Spiel'; 
+    } 
 
     document.getElementById('statusBar').innerText = 
         `Am Zug: ${ 
             currentTurn === 'blue' 
-                ? 'Du (Blau)' 
-                : 'Jörg (Rot)' 
+                ? (playMode === '2spieler' ? 'Spieler 1 (Blau)' : 'Du (Blau)') 
+                : (playMode === '2spieler' ? 'Spieler 2 (Rot)' : 'Jörg (Rot)') 
         } | ${leadingText}`; 
 
 } 
@@ -1793,7 +1829,10 @@ function updateAimPositionFromCoords(
 
 aimDonnee.addEventListener('pointerdown', (e) => { 
 
-    if (currentTurn !== 'blue' || isProcessing) { 
+    if ( 
+        isProcessing || 
+        (playMode !== '2spieler' && currentTurn !== 'blue') 
+    ) { 
         return; 
     } 
 
@@ -1808,9 +1847,11 @@ aimDonnee.addEventListener('pointerdown', (e) => {
 
 aimDonnee.addEventListener('pointermove', (e) => { 
 
-    if (!isDraggingDonnee || 
-        currentTurn !== 'blue' || 
-        isProcessing) { 
+    if ( 
+        !isDraggingDonnee || 
+        isProcessing || 
+        (playMode !== '2spieler' && currentTurn !== 'blue') 
+    ) { 
         return; 
     } 
 
@@ -1862,7 +1903,10 @@ aimDonnee.addEventListener('pointerup', (e) => {
 
 terrain.addEventListener('pointerdown', (e) => { 
 
-    if (currentTurn !== 'blue' || isProcessing) { 
+    if ( 
+        isProcessing || 
+        (playMode !== '2spieler' && currentTurn !== 'blue') 
+    ) { 
         return; 
     } 
 
@@ -1908,12 +1952,33 @@ terrain.addEventListener('pointerdown', (e) => {
 
 function executePlayerThrow() { 
 
-    if ( 
-        currentTurn !== 'blue' || 
-        isProcessing || 
-        ballsLeftBlue <= 0 
-    ) { 
+    if (isProcessing) { 
         return; 
+    } 
+
+    /* 
+     * Im KI-Modus darf nur Blau selbst werfen.
+     * Im 2-Spieler-Modus darf Blau oder Rot werfen.
+     */
+    if (playMode === '2spieler') { 
+
+        if (currentTurn === 'blue' && ballsLeftBlue <= 0) { 
+            return; 
+        } 
+
+        if (currentTurn === 'red' && ballsLeftRed <= 0) { 
+            return; 
+        } 
+
+    } else { 
+
+        if ( 
+            currentTurn !== 'blue' || 
+            ballsLeftBlue <= 0 
+        ) { 
+            return; 
+        } 
+
     } 
 
     isProcessing = true; 
@@ -1923,7 +1988,14 @@ function executePlayerThrow() {
     const powerVal = 
         parseInt(powerRangeInput.value, 10); 
 
-    ballsLeftBlue--; 
+    const throwingTeam = currentTurn; 
+
+    if (throwingTeam === 'blue') { 
+        ballsLeftBlue--; 
+    } else { 
+        ballsLeftRed--; 
+    } 
+
     updateRestDisplay(); 
 
     const startX = getThrowStartX(); 
@@ -1942,7 +2014,7 @@ function executePlayerThrow() {
         (powerVal / 112) * 2.65; 
 
     animateThrow( 
-        'blue', 
+        throwingTeam, 
         startX, 
         startY, 
         aimX, 
@@ -2157,6 +2229,7 @@ function getAITacticalPlan(startX, startY) {
 function computerThrow() { 
 
     if ( 
+        playMode === '2spieler' || 
         currentTurn !== 'red' || 
         isProcessing || 
         ballsLeftRed <= 0 
@@ -2669,16 +2742,7 @@ function resolvePhysicsAndCollisions(
             /*
              * KLEINE UNEBENHEITEN / STEINE
              *
-             * Die Kugel kann während des Rollens
-             * gelegentlich leicht abgelenkt werden.
-             *
-             * Die Wahrscheinlichkeit hängt vom
-             * gewählten Untergrund ab.
-             *
-             * GLATT    = fast nie
-             * NORMAL   = gelegentlich
-             * KIESIG   = häufiger
-             * TIEF     = gelegentlich
+             * DIESE PHYSIK BLEIBT 1:1 ERHALTEN.
              */
             if ( 
                 obj !== targetBallObj && 
@@ -2705,10 +2769,6 @@ function resolvePhysicsAndCollisions(
 
                     if (currentSpeed > 0.18) { 
 
-                        /*
-                         * Kleine zufällige Richtungsänderung,
-                         * ähnlich wie bei einem kleinen Stein.
-                         */
                         const angle = 
                             (Math.random() - 0.5) * 
                             surface.unevenStrength; 
@@ -2722,10 +2782,6 @@ function resolvePhysicsAndCollisions(
                         const oldVx = obj.vx; 
                         const oldVy = obj.vy; 
 
-                        /*
-                         * Etwas Energieverlust beim
-                         * Überrollen der Unebenheit.
-                         */
                         const speedLoss = 
                             0.82 + 
                             Math.random() * 0.12; 
@@ -2738,11 +2794,6 @@ function resolvePhysicsAndCollisions(
                             (oldVx * sinA + oldVy * cosA) * 
                             speedLoss; 
 
-                        /*
-                         * Kurze Sperrzeit verhindert,
-                         * dass die Kugel direkt mehrfach
-                         * hintereinander "auf Steine" trifft.
-                         */
                         obj.unevenCooldown = 28; 
 
                     } 
@@ -2903,7 +2954,9 @@ function endRundeAutomatically() {
         lastRoundWinner = 'blue'; 
 
         document.getElementById('statusBar').innerText = 
-            `Aufnahme beendet! Du gewinnst ${points} Punkt(e).`; 
+            playMode === '2spieler'
+                ? `Aufnahme beendet! Spieler 1 gewinnt ${points} Punkt(e).`
+                : `Aufnahme beendet! Du gewinnst ${points} Punkt(e).`; 
 
     } else { 
 
@@ -2916,7 +2969,9 @@ function endRundeAutomatically() {
         lastRoundWinner = 'red'; 
 
         document.getElementById('statusBar').innerText = 
-            `Aufnahme beendet! Jörg gewinnt ${points} Punkt(e).`; 
+            playMode === '2spieler'
+                ? `Aufnahme beendet! Spieler 2 gewinnt ${points} Punkt(e).`
+                : `Aufnahme beendet! Jörg gewinnt ${points} Punkt(e).`; 
 
     } 
 
@@ -2963,23 +3018,33 @@ function handleMatchEnd() {
 
     let isBlueWinner = scoreBlue >= 13; 
 
-    document.getElementById('endScreenTitle').innerText = 
-        isBlueWinner 
-            ? "Turniersieg für dich!" 
-            : "Jörg gewinnt das Match!"; 
+    if (playMode === '2spieler') { 
 
-    document.getElementById('endScreenText').innerText = 
-        `Endstand: Du ${scoreBlue} : ${scoreRed} Jörg\nMöchtest du noch eine Runde spielen?`; 
+        document.getElementById('endScreenTitle').innerText = 
+            isBlueWinner 
+                ? "Spieler 1 gewinnt!" 
+                : "Spieler 2 gewinnt!"; 
+
+        document.getElementById('endScreenText').innerText = 
+            `Endstand: Spieler 1 ${scoreBlue} : ${scoreRed} Spieler 2\nMöchtest du noch eine Runde spielen?`; 
+
+    } else { 
+
+        document.getElementById('endScreenTitle').innerText = 
+            isBlueWinner 
+                ? "Turniersieg für dich!" 
+                : "Jörg gewinnt das Match!"; 
+
+        document.getElementById('endScreenText').innerText = 
+            `Endstand: Du ${scoreBlue} : ${scoreRed} Jörg\nMöchtest du noch eine Runde spielen?`; 
+
+    } 
 
     document.getElementById('endScreenOverlay').style.display = 'flex'; 
 
 } 
 
 
-/* 
- * NEU: Beim Start eines komplett neuen Spiels werden 
- * wirklich alle Kugeln der vorherigen Partie entfernt. 
- */ 
 function startNewGameFromOverlay() { 
 
     scoreBlue = 0; 
@@ -2988,37 +3053,30 @@ function startNewGameFromOverlay() {
 
     document.getElementById('endScreenOverlay').style.display = 'none'; 
 
-    // Alle sichtbaren Kugeln der vorherigen Partie entfernen
     const ballsContainer = document.getElementById('ballsContainer'); 
 
     if (ballsContainer) { 
         ballsContainer.innerHTML = ''; 
     } 
 
-    // Auch die gespeicherten Kugelobjekte vollständig löschen
     playedBalls = []; 
 
-    // Neue Partie mit je 3 Kugeln starten
     ballsLeftBlue = 3; 
     ballsLeftRed = 3; 
 
     isProcessing = false; 
     currentTurn = 'blue'; 
 
-    // Schweinchen neu setzen
     randomizeTargetPosition(); 
 
-    // Donnée wieder an die Ausgangsposition setzen
     updateAimPositionFromCoords( 
         getThrowStartX(), 
         140 
     ); 
 
-    // Punktestand und Restkugeln zurücksetzen
     updateCounters(); 
     updateRestDisplay(); 
 
-    // Neues Spiel vollständig initialisieren
     initGame(); 
 
 } 
