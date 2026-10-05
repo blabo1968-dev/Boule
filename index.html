@@ -377,7 +377,7 @@
             border: 1px solid #fff; 
         } 
  
-        /* EINZIGE ÄNDERUNG:
+        /* EINZIGE TOUCH-ÄNDERUNG:
            Unsichtbare 64x64-Touchfläche,
            sichtbare Donnée bleibt 24x24. */
         #aimDonnee { 
@@ -1082,12 +1082,19 @@ let selectedGround = 'normal';
 let selectedWeather = 'trocken'; 
 
 
+/* 
+ * Untergrund-Physik:
+ * unevenChance = Wahrscheinlichkeit einer kleinen Unebenheit
+ * unevenStrength = Stärke der seitlichen Ablenkung
+ */
 const groundPhysics = { 
 
     glatt: { 
         friction: 0.038, 
         bounce: 1.00, 
         rollFactor: 1.10, 
+        unevenChance: 0.0005, 
+        unevenStrength: 0.08, 
         label: 'GLATT' 
     }, 
 
@@ -1095,6 +1102,8 @@ const groundPhysics = {
         friction: 0.055, 
         bounce: 0.94, 
         rollFactor: 1.00, 
+        unevenChance: 0.0015, 
+        unevenStrength: 0.16, 
         label: 'NORMAL / TROCKEN' 
     }, 
 
@@ -1102,6 +1111,8 @@ const groundPhysics = {
         friction: 0.075, 
         bounce: 0.82, 
         rollFactor: 0.88, 
+        unevenChance: 0.0040, 
+        unevenStrength: 0.28, 
         label: 'KIESIG' 
     }, 
 
@@ -1109,6 +1120,8 @@ const groundPhysics = {
         friction: 0.105, 
         bounce: 0.68, 
         rollFactor: 0.72, 
+        unevenChance: 0.0025, 
+        unevenStrength: 0.20, 
         label: 'TIEFER BODEN' 
     } 
 
@@ -1208,6 +1221,12 @@ function getSurfacePhysics() {
 
         rollFactor: 
             ground.rollFactor, 
+
+        unevenChance: 
+            ground.unevenChance, 
+
+        unevenStrength: 
+            ground.unevenStrength, 
 
         groundLabel: 
             ground.label, 
@@ -2317,7 +2336,8 @@ function animateThrow(
             team: team, 
             element: ballEl, 
             out: false, 
-            radius: 9 
+            radius: 9,
+            unevenCooldown: 0
 
         }; 
 
@@ -2644,6 +2664,97 @@ function resolvePhysicsAndCollisions(
                 surface.friction / 
                 0.055 
             ); 
+
+
+            /*
+             * KLEINE UNEBENHEITEN / STEINE
+             *
+             * Die Kugel kann während des Rollens
+             * gelegentlich leicht abgelenkt werden.
+             *
+             * Die Wahrscheinlichkeit hängt vom
+             * gewählten Untergrund ab.
+             *
+             * GLATT    = fast nie
+             * NORMAL   = gelegentlich
+             * KIESIG   = häufiger
+             * TIEF     = gelegentlich
+             */
+            if ( 
+                obj !== targetBallObj && 
+                Math.hypot( 
+                    obj.vx || 0, 
+                    obj.vy || 0 
+                ) > 0.18 
+            ) { 
+
+                if (!obj.unevenCooldown) { 
+                    obj.unevenCooldown = 0; 
+                } 
+
+                if ( 
+                    obj.unevenCooldown <= 0 && 
+                    Math.random() < surface.unevenChance 
+                ) { 
+
+                    const currentSpeed = 
+                        Math.hypot( 
+                            obj.vx || 0, 
+                            obj.vy || 0 
+                        ); 
+
+                    if (currentSpeed > 0.18) { 
+
+                        /*
+                         * Kleine zufällige Richtungsänderung,
+                         * ähnlich wie bei einem kleinen Stein.
+                         */
+                        const angle = 
+                            (Math.random() - 0.5) * 
+                            surface.unevenStrength; 
+
+                        const cosA = 
+                            Math.cos(angle); 
+
+                        const sinA = 
+                            Math.sin(angle); 
+
+                        const oldVx = obj.vx; 
+                        const oldVy = obj.vy; 
+
+                        /*
+                         * Etwas Energieverlust beim
+                         * Überrollen der Unebenheit.
+                         */
+                        const speedLoss = 
+                            0.82 + 
+                            Math.random() * 0.12; 
+
+                        obj.vx = 
+                            (oldVx * cosA - oldVy * sinA) * 
+                            speedLoss; 
+
+                        obj.vy = 
+                            (oldVx * sinA + oldVy * cosA) * 
+                            speedLoss; 
+
+                        /*
+                         * Kurze Sperrzeit verhindert,
+                         * dass die Kugel direkt mehrfach
+                         * hintereinander "auf Steine" trifft.
+                         */
+                        obj.unevenCooldown = 28; 
+
+                    } 
+
+                } else if (obj.unevenCooldown > 0) { 
+
+                    obj.unevenCooldown--; 
+
+                } 
+
+            } 
+
 
             if ( 
                 Math.hypot( 
